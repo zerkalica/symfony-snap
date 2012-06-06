@@ -1,0 +1,83 @@
+{
+    "require": {
+        "twitter/bootstrap": "master",
+        "EHER/PHPUnit": "dev-master",
+        "symfony/symfony": "dev-master",
+        "doctrine/orm": "2.2.0",
+        "doctrine/doctrine-bundle": "dev-master",
+        "twig/extensions": "dev-master",
+        "symfony/assetic-bundle": "dev-master",
+        "symfony/swiftmailer-bundle": "dev-master",
+        "symfony/monolog-bundle": "dev-master",
+        "sensio/distribution-bundle": "dev-master",
+        "sensio/generator-bundle": "dev-master",
+        "sensio/framework-extra-bundle": "dev-master",
+        "jms/security-extra-bundle": "1.1.0",
+        "jms/di-extra-bundle": "1.0.1",
+        "knplabs/knp-paginator-bundle": "dev-master",
+        "knplabs/knp-menu-bundle": "dev-master",
+        "craue/formflow-bundle": "dev-master",
+        "symfony/http-kernel": "dev-master",
+        "doctrine/doctrine-fixtures-bundle": "dev-master",
+        "stof/doctrine-extensions-bundle": "dev-master",
+        "doctrine/doctrine-migrations-bundle": "dev-master",
+        "symfony/twig-bundle": "2.*",
+        "friendsofsymfony/user-bundle": "dev-master",
+        "friendsofsymfony/rest-bundle": "dev-master",
+        "liip/imagine-bundle": "dev-master",
+        "zerkalica/PHP_CodeSniffer": "dev-master",
+        "phpmd/phpmd": "dev-master",
+        "sensio/buzz-bundle": "dev-master",
+        "jms/debugging-bundle": "dev-master",
+        "zerkalica/millwright-boilerplate-bundle": "dev-master",
+        "zerkalica/millwright-menu-bundle": "dev-master",
+        "zerkalica/millwright-twitter-bootstrap-bundle": "dev-master",
+        "zerkalica/symfony2-coding-standart": "master",
+        "andreychernykh/lexik-form-filter-bundle": "master"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "version": "master",
+                "name": "andreychernykh/lexik-form-filter-bundle",
+                "target-dir": "Lexik/Bundle/FormFilterBundle",
+                "autoload":     {
+                    "psr-0": { "Lexik\\Bundle\\FormFilterBundle": "" }
+                },
+                "source": {
+                    "url": "https://github.com/AndreyChernykh/LexikFormFilterBundle.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "version": "master",
+                "name": "twitter/bootstrap",
+                "source": {
+                    "url": "https://github.com/twitter/bootstrap.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "version": "master",
+                "name": "zerkalica/symfony2-coding-standart",
+                "source": {
+                    "url": "https://github.com/zerkalica/Symfony2-coding-standard.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        }
+    ]
+}
