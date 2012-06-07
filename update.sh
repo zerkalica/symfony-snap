@@ -2,7 +2,7 @@
 
 sdir=$(dirname $0)
 [ -e $sdir/composer.json ] || sdir=$(pwd)
-sbin=$(realpath $sbin)
+sdir=$(realpath "$sdir")
 
 cd $sdir && git pull
 

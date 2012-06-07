@@ -2,7 +2,7 @@
 
 sdir=$(dirname $0)/..
 [ -e $sdir/composer.json ] || sdir=$(pwd)/..
-sbin=$(realpath $sbin)
+sdir=$(realpath "$sdir")
 
 CSSEMBED_VERSION="0.4.5"
 YUICOMPRESSOR_VERSION="2.4.7"
