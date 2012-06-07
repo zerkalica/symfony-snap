@@ -6,6 +6,9 @@ sdir=$(dirname $0)
 
 sdir=$(dirname $sdir)
 
+CSSEMBED_VERSION="0.4.5"
+YUICOMPRESSOR_VERSION="2.4.7"
+
 _exit() {
     echo "$@"
     exit 1
@@ -14,12 +17,29 @@ _exit() {
 check() {
     [ "$(which npm)" ] || _exit "npm not found"
     [ "$(which wget)" ] || _exit "wget not found"
+    [ -d "$sdir/bin" ] || mkdir -p "$sdir/bin"
 }
 
 install() {
     cd $sdir
-    [ -e "$sdir/sbin/composer.phar" ] || wget http://getcomposer.org/composer.phar -O "$sdir/sbin/composer.phar"
+    [ -e "$sdir/sbin/composer.phar" ] || wget -c "http://getcomposer.org/composer.phar" -O "$sdir/sbin/composer.phar"
     [ -d "$sdir/node_modules/less" ] || npm install less
+}
+
+
+download_cssembed() {
+    [ -e "$sdir/bin/cssembed.jar" ] || wget -c "https://github.com/downloads/nzakas/cssembed/cssembed-$CSSEMBED_VERSION.jar" -O "$sdir/bin/cssembed.jar"
+}
+
+download_yui() {
+    if [ ! -e "$sdir/bin/yuicompressor.jar" ] ; then
+        wget -c "http://pypi.python.org/packages/source/y/yuicompressor/yuicompressor-$YUICOMPRESSOR_VERSION.tar.gz" -O "$sdir/bin/yuicompressor.tar.gz"
+        cd "$sdir/bin"
+        tar xfz "$sdir/bin/yuicompressor.tar.gz"
+        cp "$sdir/bin/yuicompressor-$YUICOMPRESSOR_VERSION/yuicompressor/yuicompressor.jar" "$sdir/bin/yuicompressor.jar"
+        rm -rf "$sdir/bin/yuicompressor-$YUICOMPRESSOR_VERSION"
+        rm "$sdir/bin/yuicompressor.tar.gz"
+    fi
 }
 
 update_npm() {
@@ -29,7 +49,6 @@ update_npm() {
 
 update_fix() {
     cd $sdir/vendor/twitter/bootstrap && git checkout 2.1.0-wip && git pull
-    #cd $sdir/vendor/andreychernykh/lexik-form-filter-bundle/Lexik/Bundle/FormFilterBundle && git pull
     find $sdir/vendor -type d -name '.git' | \
     while read d ; do
         echo $(basename $(dirname $d))
@@ -54,8 +73,11 @@ update_vendors() {
 
 check
 install
-
 update_npm
+
+download_cssembed
+download_yui
+
 update_vendors
 update_fix
 update_bs
