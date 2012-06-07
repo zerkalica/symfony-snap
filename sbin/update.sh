@@ -1,10 +1,8 @@
 #!/bin/sh
 
-sdir=$(dirname $0)
-
-[ -x $sdir/composer.json ] || sdir=$(pwd)
-
-sdir=$(dirname $sdir)
+sdir=$(dirname $0)/..
+[ -e $sdir/composer.json ] || sdir=$(pwd)/..
+sbin=$(realpath $sbin)
 
 CSSEMBED_VERSION="0.4.5"
 YUICOMPRESSOR_VERSION="2.4.7"

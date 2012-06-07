@@ -1,9 +1,8 @@
 #!/bin/sh
 
-sdir=$(dirname $0)
-[ -x $sdir/composer.json ] || sdir=$(pwd)
-
-sdir=$(dirname $sdir)
+sdir=$(dirname $0)/..
+[ -e $sdir/composer.json ] || sdir=$(pwd)/..
+sbin=$(realpath $sbin)
 
 prod_sdir="$(dirname $sdir)/boombate-snap-prod"
 

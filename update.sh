@@ -1,8 +1,8 @@
 #!/bin/sh
 
 sdir=$(dirname $0)
-
-[ -x $sdir/composer.json ] || sdir=$(pwd)
+[ -e $sdir/composer.json ] || sdir=$(pwd)
+sbin=$(realpath $sbin)
 
 cd $sdir && git pull
 
