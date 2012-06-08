@@ -34,7 +34,9 @@
         "zerkalica/millwright-twitter-bootstrap-bundle": "master",
         "zerkalica/symfony2-coding-standart": "master",
         "andreychernykh/lexik-form-filter-bundle": "master",
-        "gedmo/doctrine-extensions": "master"
+        "gedmo/doctrine-extensions": "master",
+        "elao/web-profiler-extra-bundle" : "dev-master",
+        "IdealTechTwigDebugBundle": "dev-master"
     },
     "config": {
         "bin-dir": "bin"
