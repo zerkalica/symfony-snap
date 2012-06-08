@@ -2,8 +2,9 @@
 
 sdir=$(dirname $0)
 [ -e $sdir/composer.json ] || sdir=$(pwd)
-sdir=$(realpath "$sdir")
+cdir="$(pwd)"
+cd $sdir && sdir="$(pwd)"
 
-cd $sdir && git pull
-
+git pull
 $sdir/sbin/update.sh
+cd "$cdir"

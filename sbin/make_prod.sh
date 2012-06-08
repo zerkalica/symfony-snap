@@ -2,7 +2,8 @@
 
 sdir=$(dirname $0)/..
 [ -e $sdir/composer.json ] || sdir=$(pwd)/..
-sdir=$(realpath "$sdir")
+cdir="$(pwd)"
+cd $sdir && sdir="$(pwd)"
 
 prod_sdir="$(dirname $sdir)/boombate-snap-prod"
 
@@ -21,3 +22,4 @@ cd $prod_sdir && find . -type f -regex 'LICENSE|README' -exec sed 's/\r//g' -i {
 
 cd "$prod_sdir" && git add . && git commit -am "updating snap" && git push
 
+cd "$cdir"

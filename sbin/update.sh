@@ -2,7 +2,8 @@
 
 sdir=$(dirname $0)/..
 [ -e $sdir/composer.json ] || sdir=$(pwd)/..
-sdir=$(realpath "$sdir")
+cdir="$(pwd)"
+cd $sdir && sdir="$(pwd)"
 
 CSSEMBED_VERSION="0.4.5"
 YUICOMPRESSOR_VERSION="2.4.7"
@@ -79,3 +80,5 @@ download_yui
 update_vendors
 update_fix
 update_bs
+
+cd "$cdir"
