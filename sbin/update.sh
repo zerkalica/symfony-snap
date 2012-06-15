@@ -52,7 +52,7 @@ update_fix() {
     while read d ; do
         echo $(basename $(dirname $d))
         cd $d/..
-
+        git reset --hard
         git checkout master 2> /dev/null 1> /dev/null ; git pull
     done
 }
