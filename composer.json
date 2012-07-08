@@ -32,7 +32,6 @@
         "zerkalica/millwright-boilerplate-bundle": "master",
         "zerkalica/millwright-menu-bundle": "master",
         "zerkalica/millwright-twitter-bootstrap-bundle": "master",
-        "zerkalica/symfony2-coding-standart": "master",
         "zerkalica/millwright-rad-bundle": "master",
         "andreychernykh/lexik-form-filter-bundle": "master",
         "gedmo/doctrine-extensions": "master",
