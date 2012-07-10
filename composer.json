@@ -37,7 +37,9 @@
         "gedmo/doctrine-extensions": "master",
         "elao/web-profiler-extra-bundle" : "dev-master",
         "problematic/acl-manager-bundle": "dev-master",
-        "bcc/extra-tools-bundle": "dev-master"
+        "bcc/extra-tools-bundle": "dev-master",
+        "knplabs/knp-gaufrette-bundle": "dev-master",
+        "vich/uploader-bundle": "dev-master"
     },
     "config": {
         "bin-dir": "bin"
