@@ -3,7 +3,7 @@
         "twitter/bootstrap": "master",
         "EHER/PHPUnit": "master",
         "symfony/symfony": "master",
-        "doctrine/orm": "master",
+        "doctrine/orm": "2.2.2",
         "doctrine/doctrine-bundle": "master",
         "twig/extensions": "master",
         "symfony/assetic-bundle": "master",

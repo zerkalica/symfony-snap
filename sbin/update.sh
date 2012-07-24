@@ -70,6 +70,13 @@ update_vendors() {
     cd $sdir && php $sdir/sbin/composer.phar update
 }
 
+fos_fix() {
+    local bdir="$sdir/vendor/friendsofsymfony/user-bundle/FOS/UserBundle"
+    cd $bdir
+    git revert a7e8615f13f69731fcb1c8a8d1af75c82eaea585
+#"remove broken commit"
+}
+
 check
 install
 update_npm
@@ -80,5 +87,7 @@ download_yui
 update_vendors
 update_fix
 update_bs
+
+#fos_fix
 
 cd "$cdir"
