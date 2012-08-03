@@ -40,7 +40,8 @@
         "problematic/acl-manager-bundle": "dev-master",
         "bcc/extra-tools-bundle": "dev-master",
         "knplabs/knp-gaufrette-bundle": "dev-master",
-	"andreychernykh/millwright-token-generator": "dev-master"
+        "andreychernykh/millwright-token-generator": "dev-master",
+        "zerkalica/semaphore-bundle": "dev-master"
     },
     "config": {
         "bin-dir": "bin"
