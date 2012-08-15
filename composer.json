@@ -42,7 +42,8 @@
         "knplabs/knp-gaufrette-bundle": "dev-master",
         "andreychernykh/millwright-token-generator": "dev-master",
         "zerkalica/semaphore-bundle": "dev-master",
-        "zerkalica/semaphore": "dev-master"
+        "zerkalica/semaphore": "dev-master",
+        "ddeboer/guzzle-bundle": "dev-master"
     },
     "config": {
         "bin-dir": "bin"
