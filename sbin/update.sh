@@ -7,6 +7,7 @@ cd $sdir && sdir="$(pwd)"
 
 CSSEMBED_VERSION="0.4.5"
 YUICOMPRESSOR_VERSION="2.4.7"
+SELENIUM_VERSION="2.25.0"
 
 _exit() {
     echo "$@"
@@ -25,6 +26,9 @@ install() {
     [ -d "$sdir/node_modules/less" ] || npm install less
 }
 
+download_selenium() {
+    [ -e "$sdir/bin/selenium-server.jar" ] || wget -c "http://selenium.googlecode.com/files/selenium-server-standalone-$SELENIUM_VERSION.jar" -O "$sdir/bin/selenium-server.jar"
+}
 
 download_cssembed() {
     [ -e "$sdir/bin/cssembed.jar" ] || wget -c "https://github.com/downloads/nzakas/cssembed/cssembed-$CSSEMBED_VERSION.jar" -O "$sdir/bin/cssembed.jar"
@@ -83,6 +87,7 @@ update_npm
 
 download_cssembed
 download_yui
+download_selenium
 
 update_vendors
 update_fix
