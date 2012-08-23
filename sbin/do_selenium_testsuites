@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# define configuration variables
+TESTS_PATH="app/Resources/tests/selenium/"
+TESTS_SUFF="suite"
+REPTS_PATH="build/selenium/"
+REPTS_SUFF="html"
+
+# selenium testing timeout
+SLNM_TESTING_TIMEOUT="1500"
+
+# project run mode configurations
+[ -z $SLNM_BASEURL ] && exit 1
+[ -z $APP_ENV ] && APP_ENV="dev"
+
+# xserver parameters
+XSCREENS_LIMIT="10"
+XVFB_OPTS="-ac"
+
+# look for needed commands
+ls=$(which ls)
+ant=$(which ant)
+xvfb=$(which Xvfb)
+ps=$(which ps)
+kill=$(which kill)
+grep=$(which grep)
+import=$(which import)
+
+# check executables
+[ -x "$ls" ]   || exit $LINENO
+[ -x "$ant" ]  || exit $LINENO
+[ -x "$xvfb" ] || exit $LINENO
+[ -x "$ps" ]   || exit $LINENO
+[ -x "$kill" ] || exit $LINENO
+[ -x "$grep" ] || exit $LINENO
+[ -x "$import" ] && IMPORT_OPTS="-window root"
+
+# look for unused xserver display and selenium port
+while true ; do
+    r="$[($RANDOM % $XSCREENS_LIMIT) + 1]"
+    [ -z "$($ps ax | $grep $xvfb | $grep ":$r.0")" ] && break
+done
+# set variables
+DISPLAY=":$r.0"
+SLNM_PORT="$[4444 + $r]"
+[ -x $import ] && IMPORT_OPTS="-display $DISPLAY $IMPORT_OPTS"
+
+# start xserver
+$xvfb $XVFB_OPTS $DISPLAY &
+XVFB_PID=$!
+
+# check that server started
+$ps $XVFB_PID 2>/dev/null 1>/dev/null || exit $LINENO
+
+# pass through testsuites and run ones
+RC=0
+for test in $($ls -1 $TESTS_PATH/ | grep ".suite") ; do
+    $ant test.selenium \
+         -D"slnmport=$SLNM_PORT" \
+         -D"slnmurl=\"$SLNM_BASEURL\"" \
+         -D"slnmsuite=$TESTS_PATH/$test" \
+         -D"slnmreport=$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.$REPTS_SUFF"\
+         -D"display=$DISPLAY" &
+    ANT_PID=$!
+
+    # wait for selenium finished successfully
+    while (( t < $SLNM_TESTING_TIMEOUT )); do
+        sleep 1
+        $ps $ANT_PID 2>/dev/null 1>/dev/null || break
+        (( t++ ))
+    done
+
+    # take screenshot
+    [ -x $import ] && \
+        $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
+
+    # kill sleep process
+    $kill $ANT_PID && RC=$LINENO
+done
+
+# reset database
+[ $RC = 0 ] && $ant db
+# halt xserver
+$kill $XVFB_PID
+
+exit $RC
