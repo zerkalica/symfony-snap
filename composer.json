@@ -42,7 +42,8 @@
         "andreychernykh/millwright-token-generator": "dev-master",
         "zerkalica/semaphore-bundle": "dev-master",
         "zerkalica/semaphore": "dev-master",
-        "phing/phing": "dev-master"
+        "phing/phing": "dev-master",
+        "leafo/lessphp": "dev-master"
     },
     "config": {
         "bin-dir": "bin"
