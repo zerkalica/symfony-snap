@@ -15,7 +15,6 @@ _exit() {
 }
 
 check() {
-    [ "$(which npm)" ] || _exit "npm not found"
     [ "$(which wget)" ] || _exit "wget not found"
     [ -d "$sdir/bin" ] || mkdir -p "$sdir/bin"
 }
@@ -42,11 +41,6 @@ download_yui() {
         rm -rf "$sdir/bin/yuicompressor-$YUICOMPRESSOR_VERSION"
         rm "$sdir/bin/yuicompressor.tar.gz"
     fi
-}
-
-update_npm() {
-    cd $sdir && npm update
-    cd $sdir && $sdir/sbin/composer.phar self-update
 }
 
 update_fix() {
@@ -82,7 +76,6 @@ fos_fix() {
 
 check
 install
-update_npm
 
 download_cssembed
 download_yui
