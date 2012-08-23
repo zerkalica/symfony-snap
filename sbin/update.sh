@@ -23,7 +23,6 @@ check() {
 install() {
     cd $sdir
     [ -e "$sdir/sbin/composer.phar" ] || wget -c "http://getcomposer.org/composer.phar" -O "$sdir/sbin/composer.phar"
-    [ -d "$sdir/node_modules/less" ] || npm install less
 }
 
 download_selenium() {
