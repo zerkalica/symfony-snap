@@ -1,7 +1,6 @@
 {
     "require": {
         "twitter/bootstrap": "dev-master",
-        "EHER/PHPUnit": "dev-composer",
         "symfony/symfony": "dev-master",
         "doctrine/orm": "2.2.2",
         "doctrine/doctrine-bundle": "dev-master",
@@ -42,6 +41,7 @@
         "andreychernykh/millwright-token-generator": "dev-master",
         "zerkalica/semaphore-bundle": "dev-master",
         "zerkalica/semaphore": "dev-master",
+        "zerkalica/PHPUnit": "dev-composer",
         "phing/phing": "dev-master",
         "leafo/lessphp": "dev-master"
     },

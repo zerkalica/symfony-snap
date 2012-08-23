@@ -12,6 +12,9 @@ prod_sdir="$(dirname $sdir)/boombate-snap-prod"
 rm -rf "$prod_sdir/vendor"
 rm -rf "$prod_sdir/bin"
 rm -rf "$prod_sdir/sbin"
+
+cd $prod_sdir ; git pull
+
 cp -Ra $sdir/* $prod_sdir/
 
 echo "Removing .git directory"
