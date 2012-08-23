@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # define configuration variables
-TESTS_PATH="app/Resources/tests/selenium/"
+TESTS_PATH="app/Resources/tests/selenium"
 TESTS_SUFF="suite"
-REPTS_PATH="build/selenium/"
+REPTS_PATH="build/selenium"
 REPTS_SUFF="html"
 
 # selenium testing timeout
