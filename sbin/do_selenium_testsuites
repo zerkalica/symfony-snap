@@ -15,10 +15,14 @@ SLNM_TESTING_TIMEOUT="1500"
 [ -z $SLNM_BASEURL ] && SLNM_BASEURL="$1"
 [ -z $APP_ENV ] && APP_ENV="test"
 
+die() {
+    echo $1
+    exit $2
+}
+
 
 if [ -z $SLNM_BASEURL ] ; then
-    echo "$0 [selenium base url]"
-    exit 1
+    die "$0 [selenium base url]" 1
 fi
 
 # xserver parameters
@@ -36,11 +40,12 @@ import=$(which import)
 
 echo "check executables"
 [ -x "$ls" ]   || exit $LINENO
-[ -x "$ant" ]  || exit $LINENO
-[ -x "$xvfb" ] || exit $LINENO
 [ -x "$ps" ]   || exit $LINENO
 [ -x "$kill" ] || exit $LINENO
 [ -x "$grep" ] || exit $LINENO
+[ -x "$ant" ]  || die "Ant not found" $LINENO
+[ -x "$xvfb" ] || die "Xvfb not found" $LINENO
+[ -x "$import" ] || die "Import not found" $LINENO
 [ -x "$import" ] && IMPORT_OPTS="-window root"
 
 echo "look for unused xserver display and selenium port"
@@ -86,9 +91,8 @@ for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
         (( t++ ))
     done
 
-    echo "take screenshot"
-    [ -x $import ] && \
-        $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
+    echo "take screenshot $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
+    [ -x $import ] && $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
 
     echo "kill sleep process"
     $kill $ANT_PID && RC=$LINENO
