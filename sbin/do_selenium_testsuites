@@ -43,9 +43,9 @@ echo "check executables"
 [ -x "$ps" ]   || exit $LINENO
 [ -x "$kill" ] || exit $LINENO
 [ -x "$grep" ] || exit $LINENO
-[ -x "$ant" ]  || die "Ant not found" $LINENO
-[ -x "$xvfb" ] || die "Xvfb not found" $LINENO
-[ -x "$import" ] || die "Import not found" $LINENO
+[ -x "$ant" ]  || die "ant not found" $LINENO
+[ -x "$xvfb" ] || die "xvfb not found" $LINENO
+[ -x "$import" ] || echo "import not found" $LINENO
 [ -x "$import" ] && IMPORT_OPTS="-window root"
 
 echo "look for unused xserver display and selenium port"
@@ -72,20 +72,29 @@ NEW_URL=$(echo $SLNM_BASEURL | sed 's/\([\.:\/]\)/\\\1/g')
 find $BUILDEDTESTS_PATH -type f -name '*.case' -exec sed "s/http\:\/\/loc\.partners\.boombate\.com\//$NEW_URL/g" -i {} \;
 find $BUILDEDTESTS_PATH -type f -name '*.suite' -exec sed '/<\?xml version.*\?>/d' -i {} \;
 
-echo "pass through testsuites and run ones: $SLNM_BASEURL"
-RC=0
-for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
-    echo "Running suite $BUILDEDTESTS_PATH/$test"
+ant_invoke() {
     $ant test.selenium \
          -D"slnmport=$SLNM_PORT" \
          -D"slnmurl=\"$SLNM_BASEURL\"" \
          -D"slnmsuite=$BUILDEDTESTS_PATH/$test" \
          -D"slnmreport=$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.$REPTS_SUFF"\
-         -D"display=$DISPLAY" &
+         -D"display=$DISPLAY"
+    RC=$?
+    echo "$RC" > $REPTS_PATH/build.status
+}
+
+echo "pass through testsuites and run ones: $SLNM_BASEURL"
+RC=0
+echo "1" > $REPTS_PATH/build.status
+
+for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
+    echo "Running suite $BUILDEDTESTS_PATH/$test"
+    ant_invoke "$test" &
     ANT_PID=$!
 
     echo "wait for selenium finished successfully"
     while (( t < $SLNM_TESTING_TIMEOUT )); do
+        echo "."
         sleep 1
         $ps $ANT_PID 2>/dev/null 1>/dev/null || break
         (( t++ ))
@@ -97,6 +106,8 @@ for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
     echo "kill sleep process"
     $kill $ANT_PID && RC=$LINENO
 done
+
+RC=$(cat $REPTS_PATH/build.status)
 
 echo "reset database"
 [ $RC = 0 ] && $ant db
