@@ -10,8 +10,13 @@ REPTS_SUFF="html"
 SLNM_TESTING_TIMEOUT="1500"
 
 # project run mode configurations
-[ -z $SLNM_BASEURL ] && exit 1
-[ -z $APP_ENV ] && APP_ENV="dev"
+[ -z $SLNM_BASEURL ] && SLNM_BASEURL="$1"
+[ -z $APP_ENV ] && APP_ENV="test"
+
+if [ -z $SLNM_BASEURL ] ; then
+    echo "$0 [selenium base url]"
+    exit 1
+fi
 
 # xserver parameters
 XSCREENS_LIMIT="10"

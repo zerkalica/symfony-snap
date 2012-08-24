@@ -8,6 +8,7 @@ cd $sdir && sdir="$(pwd)"
 CSSEMBED_VERSION="0.4.5"
 YUICOMPRESSOR_VERSION="2.4.7"
 SELENIUM_VERSION="2.25.0"
+ANT_VERSION="1.8.4"
 
 _exit() {
     echo "$@"
@@ -30,6 +31,10 @@ download_selenium() {
 
 download_cssembed() {
     [ -e "$sdir/bin/cssembed.jar" ] || wget -c "https://github.com/downloads/nzakas/cssembed/cssembed-$CSSEMBED_VERSION.jar" -O "$sdir/bin/cssembed.jar"
+}
+
+download_ant() {
+    [ -e "$sdir/bin/ant.jar" ] || wget -c "http://www.sai.msu.su/apache//ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz" -O "$sdir/bin/ant.jar"
 }
 
 download_yui() {
@@ -80,6 +85,7 @@ install
 download_cssembed
 download_yui
 download_selenium
+#download_ant
 
 update_vendors
 update_fix
