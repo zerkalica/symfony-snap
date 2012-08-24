@@ -44,32 +44,39 @@ echo "check executables"
 [ -x "$kill" ] || exit $LINENO
 [ -x "$grep" ] || exit $LINENO
 [ -x "$ant" ]  || die "ant not found" $LINENO
-[ -x "$xvfb" ] || die "xvfb not found" $LINENO
-[ -x "$import" ] || echo "import not found" $LINENO
+[ -x "$import" ] || echo "import not found: disable screenshot" $LINENO
 [ -x "$import" ] && IMPORT_OPTS="-window root"
 
-echo "look for unused xserver display and selenium port"
-while true ; do
-    r="$[($RANDOM % $XSCREENS_LIMIT) + 1]"
-    [ -z "$($ps ax | $grep $xvfb | $grep ":$r.0")" ] && break
-done
 
-# set variables
-DISPLAY=":$r.0"
-SLNM_PORT="$[4444 + $r]"
-[ -x $import ] && IMPORT_OPTS="-display $DISPLAY $IMPORT_OPTS"
+if [ -x "$xvfb" ] ; then
+    echo "look for unused xserver display and selenium port"
+    r=0
+    while true ; do
+        r="$[($RANDOM % $XSCREENS_LIMIT) + 1]"
+        [ -z "$($ps ax | $grep $xvfb | $grep ":$r.0")" ] && break
+    done
+    # set variables
+    DISPLAY=":$r.0"
+    SLNM_PORT="$[4444 + $r]"
 
-echo "start xserver"
-$xvfb $XVFB_OPTS $DISPLAY &
-XVFB_PID=$!
+    [ -x $import ] && IMPORT_OPTS="-display $DISPLAY $IMPORT_OPTS"
 
-echo "check that server started"
-$ps $XVFB_PID 2>/dev/null 1>/dev/null || exit $LINENO
+    echo "start xserver"
+    $xvfb $XVFB_OPTS $DISPLAY &
+    XVFB_PID=$!
+
+    echo "check that server started"
+    $ps $XVFB_PID 2>/dev/null 1>/dev/null || die "xvfb not started" $LINENO
+else
+    echo "xvfb not found: disable import screenshot"
+    import=
+    SLNM_PORT="4444"
+fi
 
 echo "preparing tests"
 cp -Ra $TESTS_PATH $BUILDEDTESTS_PATH
 NEW_URL=$(echo $SLNM_BASEURL | sed 's/\([\.:\/]\)/\\\1/g')
-find $BUILDEDTESTS_PATH -type f -name '*.case' -exec sed "s/http\:\/\/loc\.partners\.boombate\.com\//$NEW_URL/g" -i {} \;
+find $BUILDEDTESTS_PATH -type f -name '*.case' -exec sed "s/http\:\/\/loc\.partners\.boombate\.com/$NEW_URL/g" -i {} \;
 find $BUILDEDTESTS_PATH -type f -name '*.suite' -exec sed '/<\?xml version.*\?>/d' -i {} \;
 
 echo "pass through testsuites and run ones: $SLNM_BASEURL"
@@ -81,7 +88,7 @@ for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
          -D"slnmport=$SLNM_PORT" \
          -D"slnmurl=\"$SLNM_BASEURL\"" \
          -D"slnmsuite=$BUILDEDTESTS_PATH/$test" \
-         -D"slnmreport=$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.$REPTS_SUFF"\
+         -D"slnmreport=$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.$REPTS_SUFF" \
          -D"display=$DISPLAY" &
     ANT_PID=$!
 
@@ -94,7 +101,7 @@ for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
 
     if $ps $ANT_PID 2>/dev/null 1>/dev/null ; then
         echo "process become zombie"
-        echo "take screenshot $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
+        echo "take screenshot $import $IMPORT_OPTS$REPTS_PATH/$APP_ENV_${test%.TESTS_SUFF}.png"
         [ -x $import ] && $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
         echo "kill sleep process"
         $kill $ANT_PID
@@ -103,7 +110,7 @@ for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
     else
         wait $ANT_PID
         RC=$?
-        [ "$RC" = "0" ] || break
+        [ $RC = 0 ] || break
     fi
 done
 
@@ -111,6 +118,8 @@ echo "reset database"
 [ $RC = 0 ] && $ant db
 
 echo "halt xserver"
-$kill $XVFB_PID
+[ -x "$xvfb" ] && $kill $XVFB_PID
+
+[ $RC = 0 ] || echo "selenium tests failed"
 
 exit $RC
