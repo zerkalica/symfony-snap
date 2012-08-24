@@ -72,42 +72,40 @@ NEW_URL=$(echo $SLNM_BASEURL | sed 's/\([\.:\/]\)/\\\1/g')
 find $BUILDEDTESTS_PATH -type f -name '*.case' -exec sed "s/http\:\/\/loc\.partners\.boombate\.com\//$NEW_URL/g" -i {} \;
 find $BUILDEDTESTS_PATH -type f -name '*.suite' -exec sed '/<\?xml version.*\?>/d' -i {} \;
 
-ant_invoke() {
+echo "pass through testsuites and run ones: $SLNM_BASEURL"
+RC=0
+
+for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
+    echo "Running suite $BUILDEDTESTS_PATH/$test"
     $ant test.selenium \
          -D"slnmport=$SLNM_PORT" \
          -D"slnmurl=\"$SLNM_BASEURL\"" \
          -D"slnmsuite=$BUILDEDTESTS_PATH/$test" \
          -D"slnmreport=$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.$REPTS_SUFF"\
-         -D"display=$DISPLAY"
-    RC=$?
-    echo "$RC" > $REPTS_PATH/build.status
-}
-
-echo "pass through testsuites and run ones: $SLNM_BASEURL"
-RC=0
-echo "1" > $REPTS_PATH/build.status
-
-for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
-    echo "Running suite $BUILDEDTESTS_PATH/$test"
-    ant_invoke "$test" &
+         -D"display=$DISPLAY" &
     ANT_PID=$!
 
     echo "wait for selenium finished successfully"
     while (( t < $SLNM_TESTING_TIMEOUT )); do
-        echo "."
         sleep 1
         $ps $ANT_PID 2>/dev/null 1>/dev/null || break
         (( t++ ))
     done
 
-    echo "take screenshot $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
-    [ -x $import ] && $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
-
-    echo "kill sleep process"
-    $kill $ANT_PID && RC=$LINENO
+    if $ps $ANT_PID 2>/dev/null 1>/dev/null ; then
+        echo "process become zombie"
+        echo "take screenshot $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
+        [ -x $import ] && $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
+        echo "kill sleep process"
+        $kill $ANT_PID
+        RC=$LINENO
+        break
+    else
+        wait $ANT_PID
+        RC=$?
+        [ "$RC" = "0" ] || break
+    fi
 done
-
-RC=$(cat $REPTS_PATH/build.status)
 
 echo "reset database"
 [ $RC = 0 ] && $ant db
