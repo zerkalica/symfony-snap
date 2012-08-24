@@ -14,10 +14,7 @@ SLNM_TESTING_TIMEOUT="1500"
 # project run mode configurations
 [ -z $SLNM_BASEURL ] && SLNM_BASEURL="$1"
 [ -z $APP_ENV ] && APP_ENV="test"
-[ -z "$NEW_URL" ] && NEW_URL="$2"
-[ -z "$NEW_URL" ] && NEW_URL="http://demo.partners.boombate.com"
 
-NEW_URL=$(echo $NEW_URL | sed 's/\([\.:\/]\)/\\\1/g')
 
 if [ -z $SLNM_BASEURL ] ; then
     echo "$0 [selenium base url]"
@@ -37,7 +34,7 @@ kill=$(which kill)
 grep=$(which grep)
 import=$(which import)
 
-# check executables
+echo "check executables"
 [ -x "$ls" ]   || exit $LINENO
 [ -x "$ant" ]  || exit $LINENO
 [ -x "$xvfb" ] || exit $LINENO
@@ -46,56 +43,61 @@ import=$(which import)
 [ -x "$grep" ] || exit $LINENO
 [ -x "$import" ] && IMPORT_OPTS="-window root"
 
-# look for unused xserver display and selenium port
+echo "look for unused xserver display and selenium port"
 while true ; do
     r="$[($RANDOM % $XSCREENS_LIMIT) + 1]"
     [ -z "$($ps ax | $grep $xvfb | $grep ":$r.0")" ] && break
 done
+
 # set variables
 DISPLAY=":$r.0"
 SLNM_PORT="$[4444 + $r]"
 [ -x $import ] && IMPORT_OPTS="-display $DISPLAY $IMPORT_OPTS"
 
-# start xserver
+echo "start xserver"
 $xvfb $XVFB_OPTS $DISPLAY &
 XVFB_PID=$!
 
-# check that server started
+echo "check that server started"
 $ps $XVFB_PID 2>/dev/null 1>/dev/null || exit $LINENO
 
+echo "preparing tests"
 cp -Ra $TESTS_PATH $BUILDEDTESTS_PATH
+NEW_URL=$(echo $SLNM_BASEURL | sed 's/\([\.:\/]\)/\\\1/g')
 find $BUILDEDTESTS_PATH -type f -name '*.case' -exec sed "s/http\:\/\/loc\.partners\.boombate\.com\//$NEW_URL/g" -i {} \;
 find $BUILDEDTESTS_PATH -type f -name '*.suite' -exec sed '/<\?xml version.*\?>/d' -i {} \;
 
-# pass through testsuites and run ones
+echo "pass through testsuites and run ones"
 RC=0
 for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
+    echo "$test"
     $ant test.selenium \
          -D"slnmport=$SLNM_PORT" \
          -D"slnmurl=\"$SLNM_BASEURL\"" \
-         -D"slnmsuite=$TESTS_PATH/$test" \
+         -D"slnmsuite=$BUILDEDTESTS_PATH/$test" \
          -D"slnmreport=$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.$REPTS_SUFF"\
          -D"display=$DISPLAY" &
     ANT_PID=$!
 
-    # wait for selenium finished successfully
+    echo "wait for selenium finished successfully"
     while (( t < $SLNM_TESTING_TIMEOUT )); do
         sleep 1
         $ps $ANT_PID 2>/dev/null 1>/dev/null || break
         (( t++ ))
     done
 
-    # take screenshot
+    echo "take screenshot"
     [ -x $import ] && \
         $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
 
-    # kill sleep process
+    echo "kill sleep process"
     $kill $ANT_PID && RC=$LINENO
 done
 
-# reset database
+echo "reset database"
 [ $RC = 0 ] && $ant db
-# halt xserver
+
+echo "halt xserver"
 $kill $XVFB_PID
 
 exit $RC
