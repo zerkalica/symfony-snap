@@ -67,10 +67,10 @@ NEW_URL=$(echo $SLNM_BASEURL | sed 's/\([\.:\/]\)/\\\1/g')
 find $BUILDEDTESTS_PATH -type f -name '*.case' -exec sed "s/http\:\/\/loc\.partners\.boombate\.com\//$NEW_URL/g" -i {} \;
 find $BUILDEDTESTS_PATH -type f -name '*.suite' -exec sed '/<\?xml version.*\?>/d' -i {} \;
 
-echo "pass through testsuites and run ones"
+echo "pass through testsuites and run ones: $SLNM_BASEURL"
 RC=0
 for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
-    echo "$test"
+    echo "Running suite $BUILDEDTESTS_PATH/$test"
     $ant test.selenium \
          -D"slnmport=$SLNM_PORT" \
          -D"slnmurl=\"$SLNM_BASEURL\"" \
