@@ -113,3 +113,7 @@ YELLOW="\[\033[0;33m\]"
 GREEN="\[\033[0;32m\]"
 
 PS1="$RED\$(date +%H:%M) \w$YELLOW \$(parse_git_branch)\$(git_dirty)$GREEN\$"
+
+if [ -e ~/.symfony2-autocomplete.bash ]; then
+    . ~/.symfony2-autocomplete.bash
+fi

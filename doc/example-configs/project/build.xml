@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Default" default="build" basedir="./">
+    <property name="source" value="${basedir}/src"/>
+    <property name="appdir" value="${basedir}/app"/>
+    <property name="webdir" value="${basedir}/web"/>
+    <property name="snapdir" value="${basedir}/../symfony-snap"/>
+    <property name="include_path"
+              value="include_path=${snapdir}/vendor"/>
+    <property name="error_reporting"
+              value="error_reporting=E_ALL&amp;~E_NOTICE&amp;~E_WARNING"/>
+
+    <property name="builddir" value="${basedir}/build"/>
+
+    <property name="php" value="php"/>
+
+    <property name="tz" value="Europe/Moscow"/>
+    <property name="phpargs" value="-d ${include_path} -d ${error_reporting} -d date.timezone=${tz}"/>
+
+    <property name="phpunit" value="${snapdir}/bin/phpunit"/>
+    <property name="pdepend" value="${snapdir}/bin/pdepend"/>
+    <property name="phpmd" value="${snapdir}/bin/phpmd"/>
+    <property name="phpcpd" value="${snapdir}/bin/phpcpd"/>
+
+    <property name="phpcs" value="${snapdir}/bin/phpcs"/>
+    <property name="standard" value="Symfony2"/>
+
+    <property name="phploc" value="${snapdir}/bin/phploc"/>
+
+    <property name="phpcb" value="${snapdir}/bin/phpcb"/>
+    <property name="phpdoc" value="${snapdir}/bin/phpdoc"/>
+
+    <property name="console" value="${phpargs} ${appdir}/console"/>
+
+    <property name="slnm.rc" value="${snapdir}/bin/selenium-server.jar"/>
+    <property name="slnm.port" value="4444"/>
+    <property name="slnm.browser" value="*firefox"/>
+    <property name="slnm.url" value="http://localchost"/>
+
+    <property name="slnm.suite" value="user"/>
+    <property name="slnm.testsdir" value="${appdir}/Resources/tests/selenium"/>
+    <property name="slnm.reportdir" value="${builddir}/selenium"/>
+    <property name="slnm.testsdir.prepared" value="${slnm.reportdir}/tests"/>
+    <property name="slnm.fixer" value="${snapdir}/sbin/selenium_fix.php"/>
+
+    <property name="slnm.args"
+              value="-port ${slnm.port} -singleWindow -htmlSuite ${slnm.browser} ${slnm.url}"/>
+
+    <property name="java" value="java"/>
+    <property name="javaargs" value="-jar"/>
+    <property name="display" value=":0.0"/>
+
+    <property name="bootstrap.builder" value="${snapdir}/vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"/>
+
+    <target name="clean"
+            description="Clean up and create artifact directories">
+        <delete dir="${appdir}/cache/dev" failonerror="false"/>
+        <delete dir="${appdir}/cache/dev_new" failonerror="false"/>
+        <delete dir="${appdir}/cache/prod" failonerror="false"/>
+        <delete dir="${appdir}/cache/test" failonerror="false"/>
+        <delete dir="${webdir}/bundles" failonerror="false"/>
+
+        <delete failonerror="false">
+            <fileset dir="${webdir}/js" includes="*"/>
+            <fileset dir="${webdir}/css" includes="*"/>
+        </delete>
+
+        <delete dir="${builddir}/api" failonerror="false"/>
+        <delete dir="${builddir}/code-browser" failonerror="false"/>
+        <delete dir="${builddir}/coverage" failonerror="false"/>
+        <delete dir="${builddir}/logs" failonerror="false"/>
+        <delete dir="${builddir}/pdepend" failonerror="false"/>
+        <delete dir="${builddir}/phpdoc" failonerror="false"/>
+        <delete dir="${builddir}/selenium" failonerror="false"/>
+    </target>
+
+    <target name="prepare"
+            description="Create build directory structure">
+        <mkdir dir="${builddir}"/>
+        <mkdir dir="${builddir}/api"/>
+        <mkdir dir="${builddir}/code-browser"/>
+        <mkdir dir="${builddir}/coverage"/>
+        <mkdir dir="${builddir}/logs"/>
+        <mkdir dir="${builddir}/pdepend"/>
+        <mkdir dir="${builddir}/phpdoc"/>
+        <mkdir dir="${builddir}/selenium"/>
+    </target>
+
+    <target name="env.dev"
+            description="Switching to dev enviroment">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${console} millwright:rad:setenv --environment=dev"/>
+        </exec>
+    </target>
+
+    <target name="env.prod"
+            description="Switching to prod envoriment">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${console} millwright:rad:setenv --environment=prod"/>
+        </exec>
+    </target>
+
+    <target name="env.test"
+            description="Switching to test envoriment">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${console} millwright:rad:setenv --environment=test"/>
+        </exec>
+    </target>
+
+    <target name="report.pdepend"
+            description="Generate jdepend.xml and software metrics charts using PHP_Depend">
+        <exec executable="${php}">
+            <arg line="${phpargs} ${pdepend}
+              --jdepend-xml=${builddir}/logs/jdepend.xml
+              --jdepend-chart=${builddir}/pdepend/dependencies.svg
+              --overview-pyramid=${builddir}/pdepend/overview-pyramid.svg
+              ${source}"/>
+        </exec>
+    </target>
+
+    <target name="report.md"
+            description="Generate pmd.xml using PHPMD">
+        <exec executable="${php}">
+            <arg line="${phpargs} ${phpmd}
+              ${source}
+              xml
+              ${basedir}/phpmd.xml
+              --reportfile ${builddir}/logs/pmd.xml"/>
+        </exec>
+    </target>
+
+    <target name="report.cpd"
+            description="Generate pmd-cpd.xml using PHPCPD">
+        <exec executable="${php}">
+            <arg line="${phpargs} ${phpcpd}
+              --log-pmd ${builddir}/logs/pmd-cpd.xml
+              ${source}"/>
+        </exec>
+    </target>
+
+    <target name="report.loc"
+            description="Generate phploc.csv">
+        <exec executable="${php}">
+            <arg line="${phpargs} ${phploc}
+              --log-csv ${builddir}/logs/phploc.csv ${source}"/>
+        </exec>
+    </target>
+
+    <target name="report.cs"
+            description="Generate checkstyle.xml using PHP_CodeSniffer">
+        <exec executable="${php}">
+            <arg line="${phpargs} ${phpcs}
+              --report=checkstyle
+              --report-file=${builddir}/logs/checkstyle.xml
+              --standard=${standard}
+              ${source}"/>
+        </exec>
+    </target>
+
+    <target name="report.cb"
+            description="Aggregate tool output with PHP_CodeBrowser">
+        <exec executable="${php}">
+            <arg line="${phpargs} ${phpcb}
+              --log    ${builddir}/logs
+              --source ${source}
+              --output ${builddir}/code-browser"/>
+        </exec>
+    </target>
+
+    <target name="report.doc"
+            description="Automated document generation">
+        <exec executable="${php}">
+            <arg line="${phpargs} ${phpdoc}
+              -d ${appdir}lication
+              --target ${builddir}/phpdoc"/>
+        </exec>
+    </target>
+
+    <target name="db.create"
+            description="Database creation stub [DESTRUCTIVE]">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${console} doctrine:database:create -n"/>
+        </exec>
+    </target>
+
+    <target name="db.drop"
+            description="Database drop stub [DESTRUCTIVE]">
+        <exec executable="${php}" failonerror="false">
+            <arg line="${console} doctrine:database:drop -n --force"/>
+        </exec>
+    </target>
+
+    <target name="db.schema"
+            description="Generate empty schema [DESTRUCTIVE]">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${console} doctrine:schema:create -n"/>
+        </exec>
+    </target>
+
+    <target name="db.fixtures"
+            description="Load fixtures [DESTRUCTIVE]">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${console} doctrine:fixtures:load -n"/>
+        </exec>
+    </target>
+
+    <target name="build.migrate"
+            description="Load fixtures">
+        <exec executable="${php}" failonerror="false">
+            <arg line="${console} doctrine:migrations:migrate -n"/>
+        </exec>
+    </target>
+
+    <target name="db"
+            description="Run the db.drop, db.create, db.schema, db.fixtures [DESTRUCTIVE]">
+        <sequential>
+            <antcall target="db.drop"/>
+            <antcall target="db.create"/>
+            <antcall target="db.schema"/>
+            <antcall target="db.fixtures"/>
+        </sequential>
+    </target>
+
+    <target name="test.phpunit" depends="prepare"
+            description="Run unit tests using PHPUnit and generates junit.xml and clover.xml">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${phpargs} ${phpunit}"/>
+        </exec>
+    </target>
+
+    <target name="test.selenium.prepare" depends="prepare"
+            description="Prepare selenium tests for execution">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${phpargs} ${slnm.fixer} ${slnm.testsdir} ${slnm.testsdir.prepared} ${slnm.url}"/>
+        </exec>
+    </target>
+
+    <target name="test.selenium" depends="prepare, db"
+            description="Run generic selenium testsuite [DESTRUCTIVE]">
+        <exec executable="${java}" failonerror="true">
+            <arg line="${javaargs} ${slnm.rc} ${slnm.args} ${slnm.testsdir.prepared}/${slnm.suite}.suite ${slnm.reportdir}/${slnm.suite}.html"/>
+            <env key="DISPLAY" value="${display}"/>
+        </exec>
+    </target>
+
+    <target name="test" depends="prepare, build"
+            description="Run test.phpunit and test.selenium testsuite">
+        <parallel threadCount="1">
+            <sequential>
+                <antcall target="test.phpunit"/>
+                <antcall target="test.selenium.prepare"/>
+                <antcall target="test.selenium"/>
+            </sequential>
+        </parallel>
+    </target>
+
+    <target name="report" depends="prepare"
+            description="Run the report.pdepend, report.md, report.cpd, report.cs and report.loc, test.phpunit">
+        <parallel threadCount="2">
+            <sequential>
+                <antcall target="report.pdepend"/>
+                <antcall target="report.md"/>
+            </sequential>
+            <antcall target="report.cpd"/>
+            <antcall target="report.cs"/>
+            <antcall target="report.loc"/>
+            <antcall target="test.phpunit"/>
+        </parallel>
+    </target>
+
+    <target name="build.assets.install"
+            description="Symfony assets install">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${console} assets:install ${webdir}"/>
+        </exec>
+    </target>
+
+    <target name="build.assets.dump"
+            description="Symfony assets dump">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${console} assetic:dump ${webdir}"/>
+        </exec>
+    </target>
+
+    <target name="build.bootstrap"
+            description="Symfony bootstrap cache generation">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${phpargs} ${bootstrap.builder} ${appdir}"/>
+        </exec>
+    </target>
+
+    <target name="prod" depends="prepare"
+            description="Run the build.bootstrap, build.assets.install, build.assets.dump, build.migrate">
+        <sequential>
+            <antcall target="build.bootstrap"/>
+            <antcall target="build.assets.install"/>
+            <antcall target="build.assets.dump"/>
+            <antcall target="build.migrate"/>
+        </sequential>
+    </target>
+
+    <target name="build" depends="prepare"
+            description="Run the build.bootstrap, build.assets.install, build.assets.dump">
+        <sequential>
+            <antcall target="build.bootstrap"/>
+            <antcall target="build.assets.install"/>
+            <antcall target="build.assets.dump"/>
+        </sequential>
+    </target>
+
+    <target name="deploy"
+        description="clean, build, report [DESTRUCTIVE]">
+        <sequential>
+            <antcall target="clean"/>
+            <antcall target="build"/>
+            <antcall target="report"/>
+        </sequential>
+    </target>
+
+</project>

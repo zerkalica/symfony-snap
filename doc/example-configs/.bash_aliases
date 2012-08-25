@@ -1,0 +1,11 @@
+alias eclipse="$HOME/soft/ecl/eclipse/eclipse -data \"$HOME/projects\" -vmargs -Duser.name=\"$(git config --global user.name) <$(git config --global user.email)>\""
+
+alias cc="app/console cache:clear"
+alias res="app/update"
+alias gpl="git fetch && git rebase origin/master"
+alias gps="gpl ; git push origin master"
+alias gco="git add . && git commit -a"
+alias ful="gco ; gps"
+alias privs="find . -type d -exec chmod 755 {} \; ; find . -type f -exec chmod 644 {} \;"
+alias rcd="sudo invoke-rc.d"
+alias update="sudo aptitude update ; sudo aptitude upgrade ; sudo aptitude autoclean"
