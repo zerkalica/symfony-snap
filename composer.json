@@ -52,23 +52,6 @@
             "type": "package",
             "package": {
                 "version": "master",
-                "name": "problematic/acl-manager-bundle",
-                "autoload": {
-                    "psr-0": { "Problematic\\AclManagerBundle": "" }
-                },
-                "target-dir": "Problematic/AclManagerBundle",
-                "source": {
-                    "url": "https://github.com/Problematic/ProblematicAclManagerBundle.git",
-                    "type": "git",
-                    "reference": "master"
-                }
-            }
-        },
-
-        {
-            "type": "package",
-            "package": {
-                "version": "master",
                 "name": "andreychernykh/lexik-form-filter-bundle",
                 "target-dir": "Lexik/Bundle/FormFilterBundle",
                 "autoload":     {
