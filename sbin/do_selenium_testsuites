@@ -1,28 +1,19 @@
 #!/bin/bash
 
-# define configuration variables
-TESTS_PATH="app/Resources/tests/selenium"
-BUILDEDTESTS_PATH="build/selenium/tests"
-TESTS_SUFF="suite"
-REPTS_PATH="build/selenium"
-REPTS_SUFF="html"
-
-
-# selenium testing timeout
-SLNM_TESTING_TIMEOUT="1500"
-
 # project run mode configurations
-[ -z $SLNM_BASEURL ] && SLNM_BASEURL="$1"
-[ -z $APP_ENV ] && APP_ENV="test"
+SLNM_BASEURL="$1"
+REPTS_PATH=${2:-"build/selenium"}
+SLNM_TESTING_TIMEOUT=${3:-"1500"}
+
+BUILDEDTESTS_PATH="$REPTS_PATH/tests"
 
 die() {
     echo $1
     exit $2
 }
 
-
 if [ -z $SLNM_BASEURL ] ; then
-    die "$0 [selenium base url]" 1
+    die "$0 selenium_base_url [path to selenium report dir] [selenium process kill timeout in seconds]" 1
 fi
 
 # xserver parameters
@@ -45,8 +36,8 @@ echo "check executables"
 [ -x "$grep" ] || exit $LINENO
 [ -x "$ant" ]  || die "ant not found" $LINENO
 [ -x "$import" ] || echo "import not found: disable screenshot" $LINENO
-[ -x "$import" ] && IMPORT_OPTS="-window root"
 
+IMPORT_OPTS="-window root"
 
 if [ -x "$xvfb" ] ; then
     echo "look for unused xserver display and selenium port"
@@ -59,50 +50,52 @@ if [ -x "$xvfb" ] ; then
     DISPLAY=":$r.0"
     SLNM_PORT="$[4444 + $r]"
 
-    [ -x $import ] && IMPORT_OPTS="-display $DISPLAY $IMPORT_OPTS"
+    IMPORT_OPTS="-display $DISPLAY $IMPORT_OPTS"
 
     echo "start xserver"
     $xvfb $XVFB_OPTS $DISPLAY &
     XVFB_PID=$!
-
-    echo "check that server started"
     $ps $XVFB_PID 2>/dev/null 1>/dev/null || die "xvfb not started" $LINENO
 else
-    echo "xvfb not found: disable import screenshot"
+    echo "xvfb not found: disable starting xwindows and import screenshot"
     import=
     SLNM_PORT="4444"
 fi
 
-echo "preparing tests"
-cp -Ra $TESTS_PATH $BUILDEDTESTS_PATH
-NEW_URL=$(echo $SLNM_BASEURL | sed 's/\([\.:\/]\)/\\\1/g')
-find $BUILDEDTESTS_PATH -type f -name '*.case' -exec sed "s/http\:\/\/loc\.partners\.boombate\.com/$NEW_URL/g" -i {} \;
-find $BUILDEDTESTS_PATH -type f -name '*.suite' -exec sed '/<\?xml version.*\?>/d' -i {} \;
-
 echo "pass through testsuites and run ones: $SLNM_BASEURL"
+
 RC=0
+$ant test.selenium.prepare -D"slnm.baseurl=$SLNM_BASEURL" -D"slnm.testsdir.prepared=$BUILDEDTESTS_PATH"
+RC=$?
+[ $RC = 0 ] || die "selenium tests preparing failed" $RC
 
 for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
     echo "Running suite $BUILDEDTESTS_PATH/$test"
+    test=$(echo "$test" | cut -d'.' -f1)
+
     $ant test.selenium \
-         -D"slnmport=$SLNM_PORT" \
-         -D"slnmurl=\"$SLNM_BASEURL\"" \
-         -D"slnmsuite=$BUILDEDTESTS_PATH/$test" \
-         -D"slnmreport=$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.$REPTS_SUFF" \
+         -D"slnm.port=$SLNM_PORT" \
+         -D"slnm.suite=$test" \
+         -D"slnm.testsdir.prepared=$BUILDEDTESTS_PATH" \
          -D"display=$DISPLAY" &
     ANT_PID=$!
 
+    PS_RC=0
     echo "wait for selenium finished successfully"
     while (( t < $SLNM_TESTING_TIMEOUT )); do
         sleep 1
-        $ps $ANT_PID 2>/dev/null 1>/dev/null || break
+        $ps $ANT_PID 2>/dev/null 1>/dev/null
+        PS_RC=$?
+        [ $PS_RC = 0 ] || break
         (( t++ ))
     done
 
-    if $ps $ANT_PID 2>/dev/null 1>/dev/null ; then
+    if [ $PS_RC = 0 ]  ; then
         echo "process become zombie"
-        echo "take screenshot $import $IMPORT_OPTS$REPTS_PATH/$APP_ENV_${test%.TESTS_SUFF}.png"
-        [ -x $import ] && $import $IMPORT_OPTS "$REPTS_PATH/$APP_ENV""_${test%.TESTS_SUFF}.png"
+        if [ -x $import ] ;then
+            echo "take screenshot $import $IMPORT_OPTS $REPTS_PATH/$test.png"
+            $import $IMPORT_OPTS "$REPTS_PATH/$test.png"
+        fi
         echo "kill sleep process"
         $kill $ANT_PID
         RC=$LINENO
@@ -114,12 +107,8 @@ for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
     fi
 done
 
-echo "reset database"
 [ $RC = 0 ] && $ant db
-
-echo "halt xserver"
-[ -x "$xvfb" ] && $kill $XVFB_PID
-
-[ $RC = 0 ] || echo "selenium tests failed"
+[ "$XVFB_PID" ] && $kill $XVFB_PID
+[ $RC = 0 ] || echo "selenium tests failed: $RC"
 
 exit $RC
