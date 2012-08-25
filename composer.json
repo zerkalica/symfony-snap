@@ -15,7 +15,6 @@
         "jms/di-extra-bundle": "dev-master",
         "knplabs/knp-paginator-bundle": "dev-master",
         "knplabs/knp-menu-bundle": "dev-master",
-        "craue/formflow-bundle": "dev-master",
         "symfony/http-kernel": "dev-master",
         "doctrine/doctrine-fixtures-bundle": "dev-master",
         "stof/doctrine-extensions-bundle": "dev-master",

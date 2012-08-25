@@ -33,10 +33,6 @@ download_cssembed() {
     [ -e "$sdir/bin/cssembed.jar" ] || wget -c "https://github.com/downloads/nzakas/cssembed/cssembed-$CSSEMBED_VERSION.jar" -O "$sdir/bin/cssembed.jar"
 }
 
-download_ant() {
-    [ -e "$sdir/bin/ant.jar" ] || wget -c "http://www.sai.msu.su/apache//ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz" -O "$sdir/bin/ant.jar"
-}
-
 download_yui() {
     if [ ! -e "$sdir/bin/yuicompressor.jar" ] ; then
         wget -c "http://pypi.python.org/packages/source/y/yuicompressor/yuicompressor-$YUICOMPRESSOR_VERSION.tar.gz" -O "$sdir/bin/yuicompressor.tar.gz"
@@ -72,11 +68,13 @@ update_vendors() {
     cd $sdir && php $sdir/sbin/composer.phar update
 }
 
-fos_fix() {
-    local bdir="$sdir/vendor/friendsofsymfony/user-bundle/FOS/UserBundle"
-    cd $bdir
-    git revert a7e8615f13f69731fcb1c8a8d1af75c82eaea585
-#"remove broken commit"
+phpunit_fix()
+{
+    cd $sdir/bin
+    for i in ../vendor/zerkalica/phpunit/bin/* ; do
+        [ "$(basename $i)" = "init.php" ] && continue
+        [ -L "$(basename $i)" ] || ln $i $(basename $i)
+    done
 }
 
 check
@@ -85,12 +83,12 @@ install
 download_cssembed
 download_yui
 download_selenium
-#download_ant
 
 update_vendors
+
 update_fix
 update_bs
 
-#fos_fix
+phpunit_fix
 
 cd "$cdir"
