@@ -3,8 +3,8 @@
 # project run mode configurations
 SLNM_BASEURL="$1"
 REPTS_PATH=${2:-"build/selenium"}
-SLNM_TESTING_TIMEOUT=${3:-"1500"}
-
+BUILD_NUMBER=${3:-"0"}
+SLNM_TESTING_TIMEOUT=${4:-"1500"}
 BUILDEDTESTS_PATH="$REPTS_PATH/tests"
 
 die() {
@@ -13,7 +13,7 @@ die() {
 }
 
 if [ -z $SLNM_BASEURL ] ; then
-    die "$0 selenium_base_url [path to selenium report dir] [selenium process kill timeout in seconds]" 1
+    die "$0 selenium_base_url [path to selenium report dir] [build_number] [selenium process kill timeout in seconds]" 1
 fi
 
 # xserver parameters
@@ -68,6 +68,8 @@ RC=0
 $ant test.selenium.prepare -D"slnm.baseurl=$SLNM_BASEURL" -D"slnm.testsdir.prepared=$BUILDEDTESTS_PATH"
 RC=$?
 [ $RC = 0 ] || die "selenium tests preparing failed" $RC
+
+$ant set.build -D"build.number=$BUILD_NUMBER"
 
 for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
     echo "Running suite $BUILDEDTESTS_PATH/$test"
