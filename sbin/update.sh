@@ -20,10 +20,11 @@ check() {
     [ -d "$sdir/bin" ] || mkdir -p "$sdir/bin"
 }
 
-install() {
+download_composer() {
     cd $sdir
     [ -e "$sdir/sbin/composer.phar" ] || wget -c "http://getcomposer.org/composer.phar" -O "$sdir/sbin/composer.phar"
 }
+
 
 download_selenium() {
     [ -e "$sdir/bin/selenium-server.jar" ] || wget -c "http://selenium.googlecode.com/files/selenium-server-standalone-$SELENIUM_VERSION.jar" -O "$sdir/bin/selenium-server.jar"
@@ -64,6 +65,18 @@ update_bs() {
     cd $bdir && git checkout master && git add . && git commit -am "updated bootstrap" && git fetch && git rebase origin/master && git push
 }
 
+update_ant() {
+    [ -L $sdir/bin/ant ] && return 1
+    [ -d "$sdir/vendor/java" ] || mkdir -p "$sdir/vendor/java"
+    wget -c "http://www.carfab.com/apachesoftware//ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz" -O "$sdir/vendor/java/ant-dist.tar.gz"
+    cd "$sdir/vendor/java"
+    tar xfz "$sdir/vendor/java/ant-dist.tar.gz"
+    rm "$sdir/vendor/java/ant-dist.tar.gz"
+    mv "apache-ant-$ANT_VERSION" ant
+    cd $sdir/bin
+    ln -s ../vendor/java/ant/bin/ant ant
+}
+
 update_vendors() {
     cd $sdir && php $sdir/sbin/composer.phar update
 }
@@ -77,11 +90,11 @@ phpunit_fix() {
 }
 
 check
-install
-
+download_composer
 download_cssembed
 download_yui
 download_selenium
+update_ant
 
 update_vendors
 
