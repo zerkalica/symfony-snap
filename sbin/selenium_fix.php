@@ -16,7 +16,7 @@ class SeleniumTestsFixer
                 echo basename($sourceFile);
                 $ok = false;
                 if (preg_match('#.*\.case$#', $it->getSubPathName())) {
-                    $ok = $this->replaceInFile($this->caseFixRegex, '${1}' . preg_quote($url) . '${2}', $sourceFile, $targetFile);
+                    $ok = $this->replaceInFile($this->caseFixRegex, '${1}' .$url . '${2}', $sourceFile, $targetFile);
                 }
                 if (preg_match('#.*\.suite$#', $it->getSubPathName())) {
                     $ok = $this->replaceInFile($this->suiteFixRegex, '', $sourceFile, $targetFile);
