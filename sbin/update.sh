@@ -68,8 +68,7 @@ update_vendors() {
     cd $sdir && php $sdir/sbin/composer.phar update
 }
 
-phpunit_fix()
-{
+phpunit_fix() {
     cd $sdir/bin
     for i in ../vendor/zerkalica/phpunit/bin/* ; do
         [ "$(basename $i)" = "init.php" ] && continue
