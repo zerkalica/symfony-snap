@@ -1,6 +1,6 @@
 symfony-snap
 =============
 
-Symfony2, phpunit, twitter bootstrap and other componets for boombate projects
+Symfony2, phpunit, twitter bootstrap and other componets for symfony projects
 
-v0.1
+v1.0
