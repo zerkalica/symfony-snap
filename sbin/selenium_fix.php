@@ -8,7 +8,7 @@ class SeleniumTestsFixer
     public function fix($source, $target, $url)
     {
         $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source));
-
+        echo "replace to url $url\n";
         while($it->valid()) {
             if (!$it->isDot() && $it->isFile()) {
                 $sourceFile = $it->key();

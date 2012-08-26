@@ -65,7 +65,7 @@ fi
 echo "pass through testsuites and run ones: $SLNM_BASEURL"
 
 RC=0
-$ant selenium.prepare -D"slnm.baseurl=$SLNM_BASEURL" -D"slnm.testsdir.prepared=$BUILDEDTESTS_PATH"
+$ant selenium.prepare -D"slnm.url=$SLNM_BASEURL" -D"slnm.testsdir.prepared=$BUILDEDTESTS_PATH"
 RC=$?
 [ $RC = 0 ] || die "selenium tests preparing failed" $RC
 
