@@ -35,7 +35,7 @@
     <property name="slnm.rc" value="${snapdir}/bin/selenium-server.jar"/>
     <property name="slnm.port" value="4444"/>
     <property name="slnm.browser" value="*firefox"/>
-    <property name="slnm.url" value="http://localchost"/>
+    <property name="slnm.url" value="http://localhost"/>
 
     <property name="slnm.suite" value="user"/>
     <property name="slnm.testsdir" value="${appdir}/Resources/tests/selenium"/>
@@ -52,6 +52,8 @@
 
     <property name="bootstrap.builder" value="${snapdir}/vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"/>
 
+    <property name="build.number" value="0"/>
+
     <target name="clean"
             description="Clean up and create artifact directories">
         <delete dir="${appdir}/cache/dev" failonerror="false"/>
@@ -65,8 +67,6 @@
             <fileset dir="${webdir}/css" includes="*"/>
         </delete>
 
-        <delete dir="${builddir}/api" failonerror="false"/>
-        <delete dir="${builddir}/code-browser" failonerror="false"/>
         <delete dir="${builddir}/coverage" failonerror="false"/>
         <delete dir="${builddir}/logs" failonerror="false"/>
         <delete dir="${builddir}/pdepend" failonerror="false"/>
@@ -77,8 +77,6 @@
     <target name="prepare"
             description="Create build directory structure">
         <mkdir dir="${builddir}"/>
-        <mkdir dir="${builddir}/api"/>
-        <mkdir dir="${builddir}/code-browser"/>
         <mkdir dir="${builddir}/coverage"/>
         <mkdir dir="${builddir}/logs"/>
         <mkdir dir="${builddir}/pdepend"/>
@@ -89,21 +87,21 @@
     <target name="env.dev"
             description="Switching to dev enviroment">
         <exec executable="${php}" failonerror="true">
-            <arg line="${console} millwright:rad:setenv --environment=dev"/>
+            <arg line="${console} millwright:rad:setenv --env=dev --name=dev"/>
         </exec>
     </target>
 
     <target name="env.prod"
             description="Switching to prod envoriment">
         <exec executable="${php}" failonerror="true">
-            <arg line="${console} millwright:rad:setenv --environment=prod"/>
+            <arg line="${console} millwright:rad:setenv --env=prod --name=prod"/>
         </exec>
     </target>
 
     <target name="env.test"
             description="Switching to test envoriment">
         <exec executable="${php}" failonerror="true">
-            <arg line="${console} millwright:rad:setenv --environment=test"/>
+            <arg line="${console} millwright:rad:setenv --env=test --name=test"/>
         </exec>
     </target>
 
@@ -204,8 +202,8 @@
         </exec>
     </target>
 
-    <target name="build.migrate"
-            description="Load fixtures">
+    <target name="db.migrate"
+            description="Apply migrations">
         <exec executable="${php}" failonerror="false">
             <arg line="${console} doctrine:migrations:migrate -n"/>
         </exec>
@@ -221,21 +219,34 @@
         </sequential>
     </target>
 
-    <target name="test.phpunit" depends="prepare"
+    <target name="phpunit" depends="prepare"
             description="Run unit tests using PHPUnit and generates junit.xml and clover.xml">
         <exec executable="${php}" failonerror="true">
             <arg line="${phpargs} ${phpunit}"/>
         </exec>
     </target>
 
-    <target name="test.selenium.prepare" depends="prepare"
+    <target name="report" depends="prepare"
+            description="Run the report.pdepend, report.md, report.cb, report.cpd, report.cs and report.loc, phpunit">
+        <parallel threadCount="3">
+            <antcall target="report.pdepend"/>
+            <antcall target="report.md"/>
+            <antcall target="report.cb"/>
+            <antcall target="report.cpd"/>
+            <antcall target="report.cs"/>
+            <antcall target="report.loc"/>
+            <antcall target="phpunit"/>
+        </parallel>
+    </target>
+
+    <target name="selenium.prepare" depends="prepare"
             description="Prepare selenium tests for execution">
         <exec executable="${php}" failonerror="true">
             <arg line="${phpargs} ${slnm.fixer} ${slnm.testsdir} ${slnm.testsdir.prepared} ${slnm.url}"/>
         </exec>
     </target>
 
-    <target name="test.selenium" depends="prepare, db"
+    <target name="selenium" depends="db"
             description="Run generic selenium testsuite [DESTRUCTIVE]">
         <exec executable="${java}" failonerror="true">
             <arg line="${javaargs} ${slnm.rc} ${slnm.args} ${slnm.testsdir.prepared}/${slnm.suite}.suite ${slnm.reportdir}/${slnm.suite}.html"/>
@@ -243,29 +254,43 @@
         </exec>
     </target>
 
-    <target name="test" depends="prepare, build"
-            description="Run test.phpunit and test.selenium testsuite">
+    <target name="test" depends="build"
+            description="Run phpunit, selenium.prepare, selenium">
         <parallel threadCount="1">
             <sequential>
-                <antcall target="test.phpunit"/>
-                <antcall target="test.selenium.prepare"/>
-                <antcall target="test.selenium"/>
+                <antcall target="phpunit"/>
+                <antcall target="selenium.prepare"/>
+                <antcall target="selenium"/>
             </sequential>
         </parallel>
     </target>
 
-    <target name="report" depends="prepare"
-            description="Run the report.pdepend, report.md, report.cpd, report.cs and report.loc, test.phpunit">
-        <parallel threadCount="2">
-            <sequential>
-                <antcall target="report.pdepend"/>
-                <antcall target="report.md"/>
-            </sequential>
-            <antcall target="report.cpd"/>
-            <antcall target="report.cs"/>
-            <antcall target="report.loc"/>
-            <antcall target="test.phpunit"/>
-        </parallel>
+    <target name="version.extra"
+            description="Increment extra version number">
+        <exec executable="${php}" failonerror="false">
+            <arg line="${console} millwright:rad:version:increment --part=extra"/>
+        </exec>
+    </target>
+
+    <target name="version.minor"
+            description="Increment minor version number">
+        <exec executable="${php}" failonerror="false">
+            <arg line="${console} millwright:rad:version:increment --part=minor"/>
+        </exec>
+    </target>
+
+    <target name="version.major"
+            description="Increment major version number">
+        <exec executable="${php}" failonerror="false">
+            <arg line="${console} millwright:rad:version:increment --part=major"/>
+        </exec>
+    </target>
+
+    <target name="version.build"
+            description="Set build number">
+        <exec executable="${php}" failonerror="false">
+            <arg line="${console} millwright:rad:build:set --number=${build.number}"/>
+        </exec>
     </target>
 
     <target name="build.assets.install"
@@ -289,16 +314,6 @@
         </exec>
     </target>
 
-    <target name="prod" depends="prepare"
-            description="Run the build.bootstrap, build.assets.install, build.assets.dump, build.migrate">
-        <sequential>
-            <antcall target="build.bootstrap"/>
-            <antcall target="build.assets.install"/>
-            <antcall target="build.assets.dump"/>
-            <antcall target="build.migrate"/>
-        </sequential>
-    </target>
-
     <target name="build" depends="prepare"
             description="Run the build.bootstrap, build.assets.install, build.assets.dump">
         <sequential>
@@ -308,13 +323,19 @@
         </sequential>
     </target>
 
-    <target name="deploy"
-        description="clean, build, report [DESTRUCTIVE]">
+    <target name="deploy" description="clean, version.extra,  build, report">
         <sequential>
             <antcall target="clean"/>
+            <antcall target="version.extra"/>
             <antcall target="build"/>
             <antcall target="report"/>
         </sequential>
     </target>
 
+    <target name="update" depends="build"
+            description="Run build, db.migrate">
+        <sequential>
+            <antcall target="db.migrate"/>
+        </sequential>
+    </target>
 </project>
