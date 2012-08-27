@@ -3,9 +3,9 @@
 # project run mode configurations
 SLNM_BASEURL="$1"
 BUILD_NUMBER=${2:-"0"}
-REPTS_PATH=${3:-"build/selenium"}
-SLNM_TESTING_TIMEOUT=${4:-"1500"}
-DISPLAY="$5"
+SLNM_TESTING_TIMEOUT=${3:-"1500"}
+DISPLAY="$4"
+REPTS_PATH=${5:-"build/selenium"}
 BUILDEDTESTS_PATH="$REPTS_PATH/tests"
 
 die() {
@@ -14,7 +14,7 @@ die() {
 }
 
 if [ -z $SLNM_BASEURL ] ; then
-    die "$0 selenium_base_url [build_number] [path to selenium report dir] [selenium process kill timeout in seconds] [display number, autodetect if empty]" 1
+    die "$0 selenium_base_url [build_number] [selenium process kill timeout in seconds] [display number, autodetect if empty] [path to selenium report dir]" 1
 fi
 
 # xserver parameters
