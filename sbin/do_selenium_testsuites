@@ -6,7 +6,6 @@ BUILD_NUMBER=${2:-"0"}
 SLNM_TESTING_TIMEOUT=${3:-"1500"}
 DISPLAY="$4"
 REPTS_PATH=${5:-"build/selenium"}
-BUILDEDTESTS_PATH="$REPTS_PATH/tests"
 
 die() {
     echo $1
@@ -37,8 +36,8 @@ echo "check executables"
 [ -x "$ps" ]   || exit $LINENO
 [ -x "$kill" ] || exit $LINENO
 [ -x "$grep" ] || exit $LINENO
-[ -x "$ant" ]  || die "ant not found" $LINENO
-[ -x "$import" ] || echo "import not found: disable screenshot" $LINENO
+[ -x "$ant" ]  || die "ant not found: apt-get install ant" $LINENO
+[ -x "$import" ] || echo "import not found: apt-get install imagemagick" $LINENO
 
 IMPORT_OPTS="-window root"
 if [ ! "$DISPLAY" ] ; then
@@ -53,8 +52,6 @@ if [ ! "$DISPLAY" ] ; then
         DISPLAY=":$r.0"
         SLNM_PORT="$[4444 + $r]"
 
-        IMPORT_OPTS="-display $DISPLAY $IMPORT_OPTS"
-
         echo "start xserver"
         $xvfb $XVFB_OPTS $DISPLAY &
         XVFB_PID=$!
@@ -67,52 +64,42 @@ else
     echo "Run on $DISPLAY"
 fi
 
-echo "pass through testsuites and run ones: $SLNM_BASEURL"
+IMPORT_OPTS="-display $DISPLAY $IMPORT_OPTS"
 
-RC=0
-$ant selenium.prepare -D"slnm.url=$SLNM_BASEURL" -D"slnm.testsdir.prepared=$BUILDEDTESTS_PATH"
-RC=$?
-[ $RC = 0 ] || die "selenium tests preparing failed" $RC
+echo "pass through testsuites and run ones: $SLNM_BASEURL"
 
 $ant version.build -D"build.number=$BUILD_NUMBER"
 
-for test in $($ls -1 $BUILDEDTESTS_PATH/ | grep ".suite") ; do
-    echo "Running suite $BUILDEDTESTS_PATH/$test"
-    test=$(echo "$test" | cut -d'.' -f1)
+$ant selenium \
+    -D"slnm.port=$SLNM_PORT" \
+    -D"display=$DISPLAY" \
+    -D"slnm.url=$SLNM_BASEURL" &
+ANT_PID=$!
 
-    $ant selenium \
-         -D"slnm.port=$SLNM_PORT" \
-         -D"slnm.suite=$test" \
-         -D"slnm.testsdir.prepared=$BUILDEDTESTS_PATH" \
-         -D"display=$DISPLAY" &
-    ANT_PID=$!
-
-    PS_RC=0
-    echo "wait for selenium finished successfully"
-    while (( t < $SLNM_TESTING_TIMEOUT )); do
-        sleep 1
-        $ps $ANT_PID 2>/dev/null 1>/dev/null
-        PS_RC=$?
-        [ $PS_RC = 0 ] || break
-        (( t++ ))
-    done
-
-    if [ $PS_RC = 0 ]  ; then
-        echo "process become zombie"
-        if [ -x $import ] ;then
-            echo "take screenshot $import $IMPORT_OPTS $REPTS_PATH/$test.png"
-            $import $IMPORT_OPTS "$REPTS_PATH/$test.png"
-        fi
-        echo "kill sleep process"
-        $kill $ANT_PID
-        RC=$LINENO
-        break
-    else
-        wait $ANT_PID
-        RC=$?
-        [ $RC = 0 ] || break
-    fi
+PS_RC=0
+echo "wait for selenium finished successfully"
+while (( t < $SLNM_TESTING_TIMEOUT )); do
+    sleep 1
+    $ps $ANT_PID 2>/dev/null 1>/dev/null
+    PS_RC=$?
+    [ $PS_RC = 0 ] || break
+    (( t++ ))
 done
+
+if [ $PS_RC = 0 ] ; then
+    echo "process become zombie"
+    if [ -x $import ] ; then
+        echo "take screenshot $import $IMPORT_OPTS $REPTS_PATH/$test.png"
+        $import $IMPORT_OPTS "$REPTS_PATH/$test.png"
+    fi
+    echo "kill sleep process"
+    $kill $ANT_PID
+    RC=$LINENO
+else
+    wait $ANT_PID
+    RC=$?
+    [ $RC = 0 ] || break
+fi
 
 [ $RC = 0 ] && $ant db
 [ "$XVFB_PID" ] && $kill $XVFB_PID
