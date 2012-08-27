@@ -7,6 +7,10 @@ SLNM_TESTING_TIMEOUT=${3:-"1500"}
 XDISPLAY="$4"
 REPTS_PATH=${5:-"build/selenium"}
 
+export ANT_OPTS="-Xms256m -Xmx512m -Xss128k"
+
+#$WORKSPACE/../snap/sbin/do_selenium_testsuites http://demo.partners.boombate.com $BUILD_NUMBER 600 ":1:0"
+
 die() {
     echo $1
     exit $2
