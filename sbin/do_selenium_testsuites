@@ -4,7 +4,7 @@
 SLNM_BASEURL="$1"
 BUILD_NUMBER=${2:-"0"}
 SLNM_TESTING_TIMEOUT=${3:-"1500"}
-DISPLAY="$4"
+XDISPLAY="$4"
 REPTS_PATH=${5:-"build/selenium"}
 
 die() {
@@ -40,7 +40,7 @@ echo "check executables"
 [ -x "$import" ] || echo "import not found: apt-get install imagemagick" $LINENO
 
 IMPORT_OPTS="-window root"
-if [ ! "$DISPLAY" ] ; then
+if [ ! "$XDISPLAY" ] ; then
     if [ -x "$xvfb" ] ; then
         echo "look for unused xserver display and selenium port"
         r=0
@@ -49,11 +49,11 @@ if [ ! "$DISPLAY" ] ; then
             [ -z "$($ps ax | $grep $xvfb | $grep ":$r.0")" ] && break
         done
         # set variables
-        DISPLAY=":$r.0"
+        XDISPLAY=":$r.0"
         SLNM_PORT="$[4444 + $r]"
 
         echo "start xserver"
-        $xvfb $XVFB_OPTS $DISPLAY &
+        $xvfb $XVFB_OPTS $XDISPLAY &
         XVFB_PID=$!
         $ps $XVFB_PID 2>/dev/null 1>/dev/null || die "xvfb not started" $LINENO
     else
@@ -61,10 +61,10 @@ if [ ! "$DISPLAY" ] ; then
         import=
     fi
 else
-    echo "Run on $DISPLAY"
+    echo "Run on $XDISPLAY"
 fi
 
-IMPORT_OPTS="-display $DISPLAY $IMPORT_OPTS"
+IMPORT_OPTS="-display $XDISPLAY $IMPORT_OPTS"
 
 echo "pass through testsuites and run ones: $SLNM_BASEURL"
 
@@ -72,7 +72,7 @@ $ant version.build -D"build.number=$BUILD_NUMBER"
 
 $ant selenium \
     -D"slnm.port=$SLNM_PORT" \
-    -D"display=$DISPLAY" \
+    -D"display=$XDISPLAY" \
     -D"slnm.url=$SLNM_BASEURL" &
 ANT_PID=$!
 
@@ -98,7 +98,7 @@ if [ $PS_RC = 0 ] ; then
 else
     wait $ANT_PID
     RC=$?
-    [ $RC = 0 ] || break
+    [ $RC = 0 ]
 fi
 
 [ $RC = 0 ] && $ant db
