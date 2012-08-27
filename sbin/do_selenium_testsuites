@@ -5,6 +5,7 @@ SLNM_BASEURL="$1"
 BUILD_NUMBER=${2:-"0"}
 REPTS_PATH=${3:-"build/selenium"}
 SLNM_TESTING_TIMEOUT=${4:-"1500"}
+DISPLAY="$5"
 BUILDEDTESTS_PATH="$REPTS_PATH/tests"
 
 die() {
@@ -13,12 +14,14 @@ die() {
 }
 
 if [ -z $SLNM_BASEURL ] ; then
-    die "$0 selenium_base_url [build_number] [path to selenium report dir] [selenium process kill timeout in seconds]" 1
+    die "$0 selenium_base_url [build_number] [path to selenium report dir] [selenium process kill timeout in seconds] [display number, autodetect if empty]" 1
 fi
 
 # xserver parameters
 XSCREENS_LIMIT="10"
 XVFB_OPTS="-ac"
+SLNM_PORT="4444"
+XVFB_PID=
 
 # look for needed commands
 ls=$(which ls)
@@ -38,28 +41,30 @@ echo "check executables"
 [ -x "$import" ] || echo "import not found: disable screenshot" $LINENO
 
 IMPORT_OPTS="-window root"
+if [ ! "$DISPLAY" ] ; then
+    if [ -x "$xvfb" ] ; then
+        echo "look for unused xserver display and selenium port"
+        r=0
+        while true ; do
+            r="$[($RANDOM % $XSCREENS_LIMIT) + 1]"
+            [ -z "$($ps ax | $grep $xvfb | $grep ":$r.0")" ] && break
+        done
+        # set variables
+        DISPLAY=":$r.0"
+        SLNM_PORT="$[4444 + $r]"
 
-if [ -x "$xvfb" ] ; then
-    echo "look for unused xserver display and selenium port"
-    r=0
-    while true ; do
-        r="$[($RANDOM % $XSCREENS_LIMIT) + 1]"
-        [ -z "$($ps ax | $grep $xvfb | $grep ":$r.0")" ] && break
-    done
-    # set variables
-    DISPLAY=":$r.0"
-    SLNM_PORT="$[4444 + $r]"
+        IMPORT_OPTS="-display $DISPLAY $IMPORT_OPTS"
 
-    IMPORT_OPTS="-display $DISPLAY $IMPORT_OPTS"
-
-    echo "start xserver"
-    $xvfb $XVFB_OPTS $DISPLAY &
-    XVFB_PID=$!
-    $ps $XVFB_PID 2>/dev/null 1>/dev/null || die "xvfb not started" $LINENO
+        echo "start xserver"
+        $xvfb $XVFB_OPTS $DISPLAY &
+        XVFB_PID=$!
+        $ps $XVFB_PID 2>/dev/null 1>/dev/null || die "xvfb not started" $LINENO
+    else
+        echo "xvfb not found: disable starting xwindows and import screenshot"
+        import=
+    fi
 else
-    echo "xvfb not found: disable starting xwindows and import screenshot"
-    import=
-    SLNM_PORT="4444"
+    echo "Run on $DISPLAY"
 fi
 
 echo "pass through testsuites and run ones: $SLNM_BASEURL"
