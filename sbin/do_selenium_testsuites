@@ -74,6 +74,11 @@ echo "pass through testsuites and run ones: $SLNM_BASEURL"
 
 export DISPLAY=$XDISPLAY
 
+echo $ant env.test version.build report selenium \
+    -D"build.number=$BUILD_NUMBER"
+    -D"slnm.port=$SLNM_PORT" \
+    -D"slnm.url=$SLNM_BASEURL"
+
 $ant env.test version.build report selenium \
     -D"build.number=$BUILD_NUMBER"
     -D"slnm.port=$SLNM_PORT" \
