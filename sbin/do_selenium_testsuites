@@ -72,11 +72,11 @@ IMPORT_OPTS="-display $XDISPLAY $IMPORT_OPTS"
 
 echo "pass through testsuites and run ones: $SLNM_BASEURL"
 
-$ant version.build -D"build.number=$BUILD_NUMBER"
+export DISPLAY=$XDISPLAY
 
-$ant selenium \
+$ant env.test version.build selenium \
+    -D"build.number=$BUILD_NUMBER"
     -D"slnm.port=$SLNM_PORT" \
-    -D"display=$XDISPLAY" \
     -D"slnm.url=$SLNM_BASEURL" &
 ANT_PID=$!
 
