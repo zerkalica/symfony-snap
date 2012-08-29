@@ -74,12 +74,12 @@ echo "pass through testsuites and run ones: $SLNM_BASEURL"
 
 export DISPLAY=$XDISPLAY
 
-echo $ant env.test version.build report selenium \
+echo $ant env.test version.extra version.build report selenium \
     -D"build.number=$BUILD_NUMBER" \
     -D"slnm.port=$SLNM_PORT" \
     -D"slnm.url=$SLNM_BASEURL"
 
-$ant env.test version.build report selenium \
+$ant env.test version.extra version.build report selenium \
     -D"build.number=$BUILD_NUMBER" \
     -D"slnm.port=$SLNM_PORT" \
     -D"slnm.url=$SLNM_BASEURL" &
@@ -111,6 +111,12 @@ else
 fi
 
 [ "$XVFB_PID" ] && $kill $XVFB_PID
-[ $RC = 0 ] || echo "selenium tests failed: $RC"
+
+if [ $RC = 0 ] ; then
+    APPVERSION=$(php app/console millwright:rad:version:get --parts=3)
+    echo "version: v$APPVERSION"
+else
+    echo "selenium tests failed: $RC"
+fi
 
 exit $RC
