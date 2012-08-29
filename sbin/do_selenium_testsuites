@@ -110,7 +110,6 @@ else
     [ $RC = 0 ]
 fi
 
-[ $RC = 0 ] && $ant db
 [ "$XVFB_PID" ] && $kill $XVFB_PID
 [ $RC = 0 ] || echo "selenium tests failed: $RC"
 
