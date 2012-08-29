@@ -9,7 +9,7 @@ CSSEMBED_VERSION="0.4.5"
 YUICOMPRESSOR_VERSION="2.4.7"
 SELENIUM_VERSION="2.25.0"
 ANT_VERSION="1.8.4"
-UMLET_VERSION="11_5_1"
+UMLET_VERSION="11.5.1"
 
 _exit() {
     echo "$@"
@@ -78,11 +78,10 @@ update_ant() {
     ln -s ../vendor/java/ant/bin/ant ant
 }
 
-
 update_umlet() {
     [ -L $sdir/bin/umlet ] && return 1
-    local umlver=$(echo $UMLET_VERSION|sed 's/_/./g')
-    wget -c "http://www.umlet.com/umlet_$UMLET_VERSION/umlet_$umlver.zip"  -O "$sdir/vendor/java/umlet.zip"
+    local umlver=$(echo $UMLET_VERSION|sed 's/\./_/g')
+    wget -c "http://www.umlet.com/umlet_$umlver/umlet_$UMLET_VERSION.zip"  -O "$sdir/vendor/java/umlet.zip"
     cd "$sdir/vendor/java"
     7z  x "$sdir/vendor/java/umlet.zip"
     rm "$sdir/vendor/java/umlet.zip"
