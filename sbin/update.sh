@@ -47,7 +47,7 @@ download_yui() {
 }
 
 update_fix() {
-    cd $sdir/vendor/twitter/bootstrap && git checkout 2.1.0-wip && git pull ** git checkout v2.1.0
+    cd $sdir/vendor/twitter/bootstrap && git checkout 2.1.0-wip && git pull
     find $sdir/vendor -type d -name '.git' | \
     while read d ; do
         echo $(basename $(dirname $d))
@@ -60,6 +60,7 @@ update_fix() {
 update_bs() {
     local bdir="$sdir/vendor/zerkalica/millwright-twitter-bootstrap-bundle/Millwright/TwitterBootstrapBundle/Resources/public/bootstrap"
     rm -rf "$bdir"
+    cd $sdir/vendor/twitter/bootstrap && git checkout v2.1.0
     cp -Ra $sdir/vendor/twitter/bootstrap $bdir
     cd $bdir && rm * .* 2> /dev/null
     cd $bdir && rm -rf .git docs js/tests less/tests
