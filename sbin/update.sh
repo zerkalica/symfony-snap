@@ -47,7 +47,7 @@ download_yui() {
 }
 
 update_fix() {
-    cd $sdir/vendor/twitter/bootstrap && git checkout 2.1.0-wip && git pull
+    cd $sdir/vendor/twitter/bootstrap && git checkout 2.1.0-wip && git pull ** git checkout v2.1.0
     find $sdir/vendor -type d -name '.git' | \
     while read d ; do
         echo $(basename $(dirname $d))
