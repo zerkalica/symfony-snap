@@ -24,6 +24,7 @@ check() {
 download_composer() {
     cd $sdir
     [ -e "$sdir/sbin/composer.phar" ] || wget -c "http://getcomposer.org/composer.phar" -O "$sdir/sbin/composer.phar"
+    "$sdir/sbin/composer.phar" self-update
 }
 
 

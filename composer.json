@@ -2,7 +2,7 @@
     "require": {
         "twitter/bootstrap": "dev-master",
         "symfony/symfony": "dev-master",
-        "doctrine/orm": "2.2.2",
+        "doctrine/orm": "2.3.*",
         "doctrine/doctrine-bundle": "dev-master",
         "twig/extensions": "dev-master",
         "symfony/assetic-bundle": "dev-master",
@@ -42,7 +42,6 @@
         "elao/web-profiler-extra-bundle" : "dev-master",
         "bcc/extra-tools-bundle": "dev-master",
         "knplabs/knp-gaufrette-bundle": "dev-master",
-        "phing/phing": "dev-master",
         "leafo/lessphp": "dev-master"
     },
     "config": {
