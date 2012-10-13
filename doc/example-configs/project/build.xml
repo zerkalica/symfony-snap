@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="Default" default="build" basedir="./">
-    <property name="source" value="${basedir}/src"/>
+    <property name="srcdir" value="${basedir}/src"/>
     <property name="appdir" value="${basedir}/app"/>
     <property name="webdir" value="${basedir}/web"/>
     <property name="snapdir" value="${basedir}/../symfony-snap"/>
-    <property name="include_path"
-              value="include_path=${snapdir}/vendor"/>
-    <property name="error_reporting"
-              value="error_reporting=E_ALL&amp;~E_NOTICE&amp;~E_WARNING"/>
-
     <property name="builddir" value="${basedir}/build"/>
 
-    <property name="php" value="php"/>
-
+    <property name="include_path" value="${snapdir}/vendor"/>
+    <property name="error_reporting" value="E_ALL&amp;~E_NOTICE&amp;~E_WARNING"/>
     <property name="tz" value="Europe/Moscow"/>
-    <property name="phpargs" value="-d ${include_path} -d ${error_reporting} -d date.timezone=${tz}"/>
+
+    <property name="php" value="php"/>
+    <property name="phpargs" value="-d include_path=${include_path} -d error_reporting=${error_reporting} -d date.timezone=${tz}"/>
 
     <property name="phpunit" value="${snapdir}/bin/phpunit"/>
     <property name="pdepend" value="${snapdir}/bin/pdepend"/>
@@ -36,26 +33,45 @@
     <property name="slnm.port" value="4444"/>
     <property name="slnm.browser" value="*firefox"/>
     <property name="slnm.url" value="http://localhost"/>
-
-    <property name="slnm.suite" value="user"/>
     <property name="slnm.testsdir" value="${appdir}/Resources/tests/selenium"/>
     <property name="slnm.reportdir" value="${builddir}/selenium"/>
     <property name="slnm.testsdir.prepared" value="${slnm.reportdir}/tests"/>
     <property name="slnm.fixer" value="${snapdir}/sbin/selenium_fix.php"/>
-
-    <property name="slnm.args"
-              value="-port ${slnm.port} -singleWindow -htmlSuite ${slnm.browser} ${slnm.url}"/>
+    <property name="slnm.timeout" value="800"/>
 
     <property name="java" value="java"/>
-    <property name="javaargs" value="-jar"/>
+    <property name="javaargs" value="-Xms512m -Xmx1024m -Xss128k -jar"/>
     <property name="display" value=":0.0"/>
-
+    <property name="slnm.args" value="-port ${slnm.port}
+        -singleWindow
+        -timeout ${slnm.timeout}
+        -browserTimeout ${slnm.timeout}
+        -trustAllSSLCertificates
+        -ensureCleanSession
+        -htmlSuite ${slnm.browser}"/>
     <property name="bootstrap.builder" value="${snapdir}/vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"/>
 
-    <property name="build.number" value="0"/>
+    <property name="build.number" value="1"/>
 
-    <target name="clean"
+    <property name="test.prefix" value="1"/>
+
+    <property name="umlet.rc" value="${snapdir}/vendor/java/Umlet/umlet.jar"/>
+    <property name="umlet.args" value="-action=convert -format=png"/>
+    <property name="diagrams.lister" value="${snapdir}/sbin/filelist.php"/>
+
+    <target name="diagrams.clean"
+            description="Clean up diagrams">
+        <delete dir="${builddir}/diagrams" failonerror="false"/>
+    </target>
+
+    <target name="clean" depends="diagrams.clean"
             description="Clean up and create artifact directories">
+        <delete dir="${appdir}/cache/test1" failonerror="false"/>
+        <delete dir="${appdir}/cache/test2" failonerror="false"/>
+        <delete dir="${appdir}/cache/test3" failonerror="false"/>
+        <delete dir="${appdir}/cache/stage" failonerror="false"/>
+        <delete dir="${appdir}/cache/prod" failonerror="false"/>
+        <delete dir="${appdir}/cache/devci" failonerror="false"/>
         <delete dir="${appdir}/cache/dev" failonerror="false"/>
         <delete dir="${appdir}/cache/dev_new" failonerror="false"/>
         <delete dir="${appdir}/cache/prod" failonerror="false"/>
@@ -67,11 +83,14 @@
             <fileset dir="${webdir}/css" includes="*"/>
         </delete>
 
+        <delete dir="${builddir}/code-browser" failonerror="false"/>
+        <delete dir="${builddir}/api" failonerror="false"/>
         <delete dir="${builddir}/coverage" failonerror="false"/>
         <delete dir="${builddir}/logs" failonerror="false"/>
         <delete dir="${builddir}/pdepend" failonerror="false"/>
         <delete dir="${builddir}/phpdoc" failonerror="false"/>
         <delete dir="${builddir}/selenium" failonerror="false"/>
+        <delete dir="${builddir}" failonerror="false"/>
     </target>
 
     <target name="prepare"
@@ -82,26 +101,44 @@
         <mkdir dir="${builddir}/pdepend"/>
         <mkdir dir="${builddir}/phpdoc"/>
         <mkdir dir="${builddir}/selenium"/>
+        <mkdir dir="${builddir}/selenium/profile"/>
+        <mkdir dir="${builddir}/code-browser"/>
+        <mkdir dir="${builddir}/api"/>
+        <mkdir dir="${builddir}/diagrams"/>
     </target>
 
-    <target name="env.dev"
-            description="Switching to dev enviroment">
+    <target name="env.dev" depends="build.bootstrap"
+            description="Switching to dev environment">
         <exec executable="${php}" failonerror="true">
             <arg line="${console} millwright:rad:setenv --env=dev --name=dev"/>
         </exec>
     </target>
 
-    <target name="env.prod"
-            description="Switching to prod envoriment">
+    <target name="env.devci" depends="build.bootstrap"
+            description="Switching to dev ci environment">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${console} millwright:rad:setenv --env=devci --name=devci"/>
+        </exec>
+    </target>
+
+    <target name="env.prod" depends="build.bootstrap"
+            description="Switching to prod environment">
         <exec executable="${php}" failonerror="true">
             <arg line="${console} millwright:rad:setenv --env=prod --name=prod"/>
         </exec>
     </target>
 
-    <target name="env.test"
-            description="Switching to test envoriment">
+    <target name="env.stage" depends="build.bootstrap"
+            description="Switching to stage environment">
         <exec executable="${php}" failonerror="true">
-            <arg line="${console} millwright:rad:setenv --env=test --name=test"/>
+            <arg line="${console} millwright:rad:setenv --env=stage --name=stage"/>
+        </exec>
+    </target>
+
+    <target name="env.test" depends="build.bootstrap"
+            description="Switching to test environment">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${console} millwright:rad:setenv --env=test${test.prefix} --name=test${test.prefix}"/>
         </exec>
     </target>
 
@@ -112,15 +149,15 @@
               --jdepend-xml=${builddir}/logs/jdepend.xml
               --jdepend-chart=${builddir}/pdepend/dependencies.svg
               --overview-pyramid=${builddir}/pdepend/overview-pyramid.svg
-              ${source}"/>
+              ${srcdir}"/>
         </exec>
     </target>
 
     <target name="report.md"
             description="Generate pmd.xml using PHPMD">
-        <exec executable="${php}">
+        <exec executable="${php}"  failonerror="false">
             <arg line="${phpargs} ${phpmd}
-              ${source}
+              ${srcdir}
               xml
               ${basedir}/phpmd.xml
               --reportfile ${builddir}/logs/pmd.xml"/>
@@ -132,7 +169,7 @@
         <exec executable="${php}">
             <arg line="${phpargs} ${phpcpd}
               --log-pmd ${builddir}/logs/pmd-cpd.xml
-              ${source}"/>
+              ${srcdir}"/>
         </exec>
     </target>
 
@@ -140,7 +177,7 @@
             description="Generate phploc.csv">
         <exec executable="${php}">
             <arg line="${phpargs} ${phploc}
-              --log-csv ${builddir}/logs/phploc.csv ${source}"/>
+              --log-csv ${builddir}/logs/phploc.csv ${srcdir}"/>
         </exec>
     </target>
 
@@ -151,7 +188,7 @@
               --report=checkstyle
               --report-file=${builddir}/logs/checkstyle.xml
               --standard=${standard}
-              ${source}"/>
+              ${srcdir}"/>
         </exec>
     </target>
 
@@ -160,7 +197,7 @@
         <exec executable="${php}">
             <arg line="${phpargs} ${phpcb}
               --log    ${builddir}/logs
-              --source ${source}
+              --source ${srcdir}
               --output ${builddir}/code-browser"/>
         </exec>
     </target>
@@ -226,16 +263,39 @@
         </exec>
     </target>
 
+    <target name="diagrams.render"  depends="prepare"
+            description="Render umlet uxf diagrams">
+        <apply executable="${java}" failonerror="true">
+            <arg line="${javaargs} ${umlet.rc} ${umlet.args}"/>
+            <srcfile prefix="-filename=" />
+            <targetfile prefix="-output=" />
+            <path>
+                <fileset dir="${basedir}" includes="**/*.uxf"/>
+            </path>
+            <regexpmapper from=".*/([^/]+)\.uxf$" to="${builddir}/diagrams/\1.png"/>
+        </apply>
+    </target>
+
+    <target name="diagrams" depends="diagrams.clean, diagrams.render"
+            description="Generate diagrams from umlet schemas">
+        <exec executable="${php}" failonerror="true">
+            <arg line="${phpargs} ${diagrams.lister} ${builddir}/diagrams ${builddir}/diagrams/index.html"/>
+        </exec>
+    </target>
+
     <target name="report" depends="prepare"
             description="Run the report.pdepend, report.md, report.cb, report.cpd, report.cs and report.loc, phpunit">
-        <parallel threadCount="3">
-            <antcall target="report.pdepend"/>
-            <antcall target="report.md"/>
-            <antcall target="report.cb"/>
-            <antcall target="report.cpd"/>
-            <antcall target="report.cs"/>
-            <antcall target="report.loc"/>
-            <antcall target="phpunit"/>
+        <parallel threadCount="1">
+            <sequential>
+                <antcall target="phpunit"/>
+                <antcall target="report.pdepend"/>
+                <antcall target="report.cb"/>
+                <antcall target="report.cpd"/>
+                <antcall target="report.cs"/>
+                <antcall target="report.loc"/>
+                <antcall target="report.md"/>
+                <antcall target="diagrams"/>
+           </sequential>
         </parallel>
     </target>
 
@@ -246,20 +306,22 @@
         </exec>
     </target>
 
-    <target name="selenium" depends="db"
+    <target name="selenium"  depends="selenium.prepare, db"
             description="Run generic selenium testsuite [DESTRUCTIVE]">
-        <exec executable="${java}" failonerror="true">
-            <arg line="${javaargs} ${slnm.rc} ${slnm.args} ${slnm.testsdir.prepared}/${slnm.suite}.suite ${slnm.reportdir}/${slnm.suite}.html"/>
-            <env key="DISPLAY" value="${display}"/>
-        </exec>
+        <apply executable="${java}" failonerror="true">
+            <arg line="${javaargs} ${slnm.rc} ${slnm.args} ${slnm.url}"/>
+            <srcfile/>
+            <targetfile/>
+            <fileset dir="${slnm.testsdir.prepared}" includes="*.suite"/>
+            <mapper type="glob" from="*.suite" to="${slnm.reportdir}/*.html"/>
+        </apply>
     </target>
 
-    <target name="test" depends="build"
+    <target name="test" depends="clean, build"
             description="Run phpunit, selenium.prepare, selenium">
         <parallel threadCount="1">
             <sequential>
                 <antcall target="phpunit"/>
-                <antcall target="selenium.prepare"/>
                 <antcall target="selenium"/>
             </sequential>
         </parallel>
@@ -320,15 +382,6 @@
             <antcall target="build.bootstrap"/>
             <antcall target="build.assets.install"/>
             <antcall target="build.assets.dump"/>
-        </sequential>
-    </target>
-
-    <target name="deploy" description="clean, version.extra,  build, report">
-        <sequential>
-            <antcall target="clean"/>
-            <antcall target="version.extra"/>
-            <antcall target="build"/>
-            <antcall target="report"/>
         </sequential>
     </target>
 
