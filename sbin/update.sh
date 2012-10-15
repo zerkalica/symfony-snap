@@ -111,7 +111,7 @@ download_selenium
 update_ant
 update_umlet
 
-#update_vendors
+update_vendors
 
 update_fix
 update_bs
