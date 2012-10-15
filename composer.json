@@ -29,6 +29,7 @@
         "zerkalica/millwright-menu-bundle": "dev-master",
         "zerkalica/millwright-twitter-bootstrap-bundle": "dev-master",
         "zerkalica/millwright-version-manager-bundle": "dev-master",
+        "zerkalica/filter-bundle": "dev-master",
         "zerkalica/millwright-rad-bundle": "dev-master",
         "zerkalica/millwright-configuration-bundle": "dev-master",
         "zerkalica/semaphore-bundle": "dev-master",
