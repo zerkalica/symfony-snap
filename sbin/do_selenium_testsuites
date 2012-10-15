@@ -74,7 +74,7 @@ echo "pass through testsuites and run ones: $SLNM_BASEURL"
 
 export DISPLAY=$XDISPLAY
 
-slnm=
+slnm=""
 [ -z "$SLNM_BASEURL" ] || slnm="selenium"
 
 $ant version.extra version.build report $slnm \
