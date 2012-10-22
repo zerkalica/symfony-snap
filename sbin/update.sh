@@ -98,7 +98,7 @@ phpunit_fix() {
     cd $sdir/bin
     for i in ../vendor/zerkalica/phpunit/bin/* ; do
         [ "$(basename $i)" = "init.php" ] && continue
-        [ -L "$(basename $i)" ] || ln $i $(basename $i)
+        [ -L "$(basename $i)" ] || ln -s $i $(basename $i)
     done
 }
 
