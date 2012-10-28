@@ -10,6 +10,7 @@ YUICOMPRESSOR_VERSION="2.4.7"
 SELENIUM_VERSION="2.25.0"
 ANT_VERSION="1.8.4"
 UMLET_VERSION="11.5.1"
+FOP_VERSION="1.1"
 
 _exit() {
     echo "$@"
@@ -44,6 +45,18 @@ download_yui() {
         cp "$sdir/bin/yuicompressor-$YUICOMPRESSOR_VERSION/yuicompressor/yuicompressor.jar" "$sdir/bin/yuicompressor.jar"
         rm -rf "$sdir/bin/yuicompressor-$YUICOMPRESSOR_VERSION"
         rm "$sdir/bin/yuicompressor.tar.gz"
+    fi
+}
+
+download_fop() {
+    if [ ! -e "$sdir/bin/fop" ] ; then
+        wget -c "http://apache.softded.ru/xmlgraphics/fop/binaries/fop-$FOP_VERSION-bin.tar.gz" -O "$sdir/vendor/java/fop.tar.gz"
+        cd "$sdir/vendor/java"
+        tar xfz fop.tar.gz
+        mv "fop-$FOP_VERSION" "fop"
+        rm fop.tar.gz
+        cd $sdir/bin
+        ln -s ../vendor/java/fop/fop fop
     fi
 }
 
@@ -82,7 +95,7 @@ update_ant() {
 update_umlet() {
     [ -L $sdir/bin/umlet ] && return 1
     local umlver=$(echo $UMLET_VERSION|sed 's/\./_/g')
-    wget -c "http://www.umlet.com/umlet_$umlver/umlet_$UMLET_VERSION.zip"  -O "$sdir/vendor/java/umlet.zip"
+    wget -c "http://www.umlet.com/umlet_$umlver/umlet_$UMLET_VERSION.zip" -O "$sdir/vendor/java/umlet.zip"
     cd "$sdir/vendor/java"
     7z  x "$sdir/vendor/java/umlet.zip"
     rm "$sdir/vendor/java/umlet.zip"
@@ -108,6 +121,7 @@ download_composer
 download_cssembed
 download_yui
 download_selenium
+download_fop
 update_ant
 update_umlet
 
