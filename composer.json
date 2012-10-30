@@ -33,6 +33,7 @@
         "zerkalica/millwright-util": "dev-master",
         "zerkalica/semaphore-bundle": "dev-master",
         "zerkalica/semaphore": "dev-master",
+        "zerkalica/phpuml": "dev-master",
         "zerkalica/phpunit": "dev-master",
         "zerkalica/php-code-sniffer": "dev-master",
         "zerkalica/php-code-browser": "dev-master",
