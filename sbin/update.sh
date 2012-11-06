@@ -128,7 +128,7 @@ update_umlet
 update_vendors
 
 update_fix
-update_bs
+#update_bs
 
 phpunit_fix
 
