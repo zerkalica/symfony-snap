@@ -1,6 +1,5 @@
 {
     "require": {
-        "twitter/bootstrap": "dev-master",
         "symfony/symfony": "2.1.*",
         "doctrine/orm": "2.3.*",
         "doctrine/doctrine-bundle": "dev-master",
@@ -63,19 +62,6 @@
                 },
                 "source": {
                     "url": "https://github.com/AndreyChernykh/LexikFormFilterBundle.git",
-                    "type": "git",
-                    "reference": "master"
-                }
-            }
-        },
-
-        {
-            "type": "package",
-            "package": {
-                "version": "master",
-                "name": "twitter/bootstrap",
-                "source": {
-                    "url": "https://github.com/twitter/bootstrap.git",
                     "type": "git",
                     "reference": "master"
                 }
