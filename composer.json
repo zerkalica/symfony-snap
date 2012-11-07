@@ -40,7 +40,7 @@
         "zerkalica/phpmd": "dev-master",
         "andreychernykh/lexik-form-filter-bundle": "dev-master",
         "andreychernykh/millwright-token-generator": "dev-master",
-        "xi/ajax-bundle": "2.1.x-dev",
+        "xi/ajax-bundle": "dev-master",
         "gedmo/doctrine-extensions": "dev-master",
         "elao/web-profiler-extra-bundle" : "dev-master",
         "bcc/extra-tools-bundle": "dev-master",
