@@ -46,7 +46,8 @@
         "bcc/extra-tools-bundle": "dev-master",
         "knplabs/knp-gaufrette-bundle": "dev-master",
         "leafo/lessphp": "dev-master",
-        "beberlei/lite-cqrs": "dev-master"
+        "beberlei/lite-cqrs": "dev-master",
+        "beberlei/assert": "*"
     },
     "config": {
         "bin-dir": "bin"
