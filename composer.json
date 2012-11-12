@@ -47,7 +47,8 @@
         "knplabs/knp-gaufrette-bundle": "dev-master",
         "leafo/lessphp": "dev-master",
         "beberlei/lite-cqrs": "dev-master",
-        "beberlei/assert": "*"
+        "beberlei/assert": "*",
+        "friendsofsymfony/comment-bundle": "dev-master"
     },
     "config": {
         "bin-dir": "bin"
