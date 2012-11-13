@@ -111,8 +111,11 @@ phpunit_fix() {
     cd $sdir/bin
     for i in ../vendor/zerkalica/phpunit/bin/* ; do
         [ "$(basename $i)" = "init.php" ] && continue
+        sed 's/\r//g' -i $i
         [ -L "$(basename $i)" ] || ln -s $i $(basename $i)
     done
+
+    cd "$sdir/vendor/doctrine/orm" && git checkout 2.3.0
 }
 
 check
