@@ -48,7 +48,6 @@
         "knplabs/gaufrette": "dev-master",
         "leafo/lessphp": "dev-master",
         "beberlei/assert": "*",
-        "friendsofsymfony/comment-bundle": "dev-master",
         "simplethings/form-serializer-bundle": "dev-master"
     },
     "config": {
