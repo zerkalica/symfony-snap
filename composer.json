@@ -41,16 +41,15 @@
         "zerkalica/phpmd": "dev-master",
         "andreychernykh/lexik-form-filter-bundle": "dev-master",
         "andreychernykh/millwright-token-generator": "dev-master",
-        "xi/ajax-bundle": "dev-master",
         "gedmo/doctrine-extensions": "dev-master",
         "elao/web-profiler-extra-bundle" : "dev-master",
         "bcc/extra-tools-bundle": "dev-master",
         "knplabs/knp-gaufrette-bundle": "dev-master",
         "knplabs/gaufrette": "dev-master",
         "leafo/lessphp": "dev-master",
-        "beberlei/lite-cqrs": "dev-master",
         "beberlei/assert": "*",
-        "friendsofsymfony/comment-bundle": "dev-master"
+        "friendsofsymfony/comment-bundle": "dev-master",
+        "simplethings/form-serializer-bundle": "dev-master"
     },
     "config": {
         "bin-dir": "bin"
