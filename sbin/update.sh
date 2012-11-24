@@ -133,4 +133,8 @@ update_fix
 
 phpunit_fix
 
+echo "temporary fix - check https://github.com/symfony/symfony/pull/6096"
+cd $sdir/vendor/symfony/symfony
+git checkout d5ff2388cbacf17a389e7aae9d7f4397b929bfcc
+
 cd "$cdir"
