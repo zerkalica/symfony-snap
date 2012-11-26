@@ -61,6 +61,44 @@
             "type": "package",
             "package": {
                 "version": "master",
+                "name": "opensoft/simple-serializer",
+                "target-dir": "Opensoft",
+                "autoload": {
+                    "psr-0": {
+                        "Opensoft": "src"
+                    }
+                },
+                "source": {
+                    "url": "https://github.com/opensoft/simple-serializer.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        },
+
+        {
+            "type": "package",
+            "package": {
+                "version": "master",
+                "name": "opensoft/opensoft-simple-serializer-bundle",
+                "target-dir": "Opensoft/Bundle/SimpleSerializerBundle",
+                "autoload": {
+                    "psr-0": {
+                        "Opensoft\\Bundle\\SimpleSerializerBundle": ""
+                    }
+                },
+                "source": {
+                    "url": "https://github.com/opensoft/OpensoftSimpleSerializerBundle.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        },
+
+        {
+            "type": "package",
+            "package": {
+                "version": "master",
                 "name": "andreychernykh/lexik-form-filter-bundle",
                 "target-dir": "Lexik/Bundle/FormFilterBundle",
                 "autoload":     {
