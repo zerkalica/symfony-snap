@@ -116,6 +116,15 @@ phpunit_fix() {
     done
 }
 
+node_install() {
+   cd $sdir/vendor/java
+   npm install less coffee-script
+   for i in $sdir/vendor/java/node_modules/.bin/* ; do
+      sed 's/\r//g' -i $i
+      [ -L "$(basename $i)" ] || ln -s $i $(basename $i)
+   done
+}
+
 check
 
 download_composer
@@ -127,11 +136,12 @@ update_ant
 update_umlet
 
 update_vendors
-
+node_install
 update_fix
 #update_bs
 
 phpunit_fix
+node_install
 
 echo "temporary fix - check https://github.com/symfony/symfony/pull/6096"
 cd $sdir/vendor/symfony/symfony
