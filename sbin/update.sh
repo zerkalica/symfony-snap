@@ -141,7 +141,6 @@ update_fix
 #update_bs
 
 phpunit_fix
-node_install
 
 echo "temporary fix - check https://github.com/symfony/symfony/pull/6096"
 cd $sdir/vendor/symfony/symfony
