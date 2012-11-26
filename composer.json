@@ -51,6 +51,7 @@
         "simplethings/form-serializer-bundle": "dev-master",
         "manymules/jquery-bundle": "dev-master",
         "manymules/modernizr-bundle": "dev-master",
+        "opensoft/simple-serializer": "dev-master",
         "opensoft/opensoft-simple-serializer-bundle": "dev-master",
         "manymules/backbonejs-bundle": "dev-master"
     },
