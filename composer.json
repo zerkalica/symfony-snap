@@ -48,7 +48,11 @@
         "knplabs/gaufrette": "dev-master",
         "leafo/lessphp": "dev-master",
         "beberlei/assert": "*",
-        "simplethings/form-serializer-bundle": "dev-master"
+        "simplethings/form-serializer-bundle": "dev-master",
+        "manymules/jquery-bundle": "dev-master",
+        "manymules/modernizr-bundle": "dev-master",
+        "opensoft/opensoft-simple-serializer-bundle",
+        "manymules/backbonejs-bundle"
     },
     "config": {
         "bin-dir": "bin"
