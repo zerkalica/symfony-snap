@@ -65,10 +65,9 @@
             "package": {
                 "version": "master",
                 "name": "opensoft/simple-serializer",
-                "target-dir": "Opensoft",
                 "autoload": {
                     "psr-0": {
-                        "Opensoft": "src"
+                        "Opensoft": "src/"
                     }
                 },
                 "source": {
