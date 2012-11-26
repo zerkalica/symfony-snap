@@ -117,12 +117,13 @@ phpunit_fix() {
 }
 
 node_install() {
-   cd $sdir/vendor/java
-   npm install less coffee-script
-   for i in $sdir/vendor/java/node_modules/.bin/* ; do
-      sed 's/\r//g' -i $i
-      [ -L "$(basename $i)" ] || ln -s $i $(basename $i)
-   done
+    cd $sdir/vendor/java
+    npm install less coffee-script
+    cd $sdir/bin
+    for i in $sdir/vendor/java/node_modules/.bin/* ; do
+       sed 's/\r//g' -i $i
+       [ -L "$(basename $i)" ] || ln -s $i $(basename $i)
+    done
 }
 
 check

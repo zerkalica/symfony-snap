@@ -2,10 +2,10 @@ alias eclipse="$HOME/soft/ecl/eclipse/eclipse -data \"$HOME/projects\" -vmargs -
 
 alias pr="cd $HOME/projects"
 
-alias gpl="git checkout develop && git fetch && git rebase origin/develop"
-alias gps="git push"
-alias gac="git add . && git commit -am"
-alias gacp="gac && gps"
+alias gpl="git pull"
+alias gps="git pull ; git push"
+alias gco="git add . && git commit -am"
+alias ful="gco && gps"
 
 alias gff="git flow feature"
 alias gffc="gff checkout"
