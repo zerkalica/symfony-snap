@@ -46,7 +46,6 @@
         "bcc/extra-tools-bundle": "dev-master",
         "knplabs/knp-gaufrette-bundle": "dev-master",
         "knplabs/gaufrette": "dev-master",
-        "leafo/lessphp": "dev-master",
         "beberlei/assert": "*",
         "simplethings/form-serializer-bundle": "dev-master",
         "manymules/jquery-bundle": "dev-master",
