@@ -116,6 +116,16 @@ phpunit_fix() {
     done
 }
 
+node_install() {
+    cd $sdir/vendor/java
+    npm install less coffee-script
+    cd $sdir/bin
+    for i in $sdir/vendor/java/node_modules/.bin/* ; do
+       sed 's/\r//g' -i $i
+       [ -L "$(basename $i)" ] || ln -s $i $(basename $i)
+    done
+}
+
 check
 
 download_composer
@@ -127,7 +137,7 @@ update_ant
 update_umlet
 
 update_vendors
-
+node_install
 update_fix
 #update_bs
 

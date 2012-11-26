@@ -50,9 +50,13 @@
         "beberlei/assert": "*",
         "simplethings/form-serializer-bundle": "dev-master",
         "manymules/jquery-bundle": "dev-master",
+<<<<<<< HEAD
         "manymules/modernizr-bundle": "dev-master",
         "opensoft/opensoft-simple-serializer-bundle",
         "manymules/backbonejs-bundle"
+=======
+        "manymules/modernizr-bundle": "dev-master"
+>>>>>>> 2dbd6b7e2d5fd5a1231f803a275817006a82b19c
     },
     "config": {
         "bin-dir": "bin"
