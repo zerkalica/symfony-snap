@@ -119,7 +119,8 @@ phpunit_fix() {
 node_install() {
     cd $sdir/vendor/java
     which npm || "echo npm not found"
-    npm install less coffee-script
+    [ -e "node_modules/.bin/coffee" ] || npm install less coffee-script
+    npm update
     cd $sdir/bin
     for i in $sdir/vendor/java/node_modules/.bin/* ; do
        sed 's/\r//g' -i $i

@@ -52,6 +52,7 @@
         "manymules/modernizr-bundle": "dev-master",
         "manymules/backbonejs-bundle": "dev-master",
         "manymules/lodash-bundle": "dev-master",
+        "manymules/marionettejs-bundle": "dev-master",
 
         "opensoft/simple-serializer": "dev-master",
         "opensoft/opensoft-simple-serializer-bundle": "dev-master"
