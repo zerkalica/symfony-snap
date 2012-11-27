@@ -4,7 +4,7 @@ alias pr="cd $HOME/projects"
 
 alias gpl="git pull"
 alias gps="git pull ; git push"
-alias gco="git add . && git commit -am"
+alias gco="git add . && git commit -a"
 alias ful="gco && gps"
 
 alias gff="git flow feature"
