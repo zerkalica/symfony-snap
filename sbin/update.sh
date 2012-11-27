@@ -126,7 +126,6 @@ node_install() {
        sed 's/\r//g' -i $i
        [ -L "$(basename $i)" ] || ln -s $i $(basename $i)
     done
-    exit
 }
 
 check
