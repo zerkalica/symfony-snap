@@ -40,6 +40,7 @@
         "zerkalica/php-code-browser": "dev-master",
         "zerkalica/phpmd": "dev-master",
         "andreychernykh/lexik-form-filter-bundle": "dev-master",
+        "andreychernykh/millwright-token-generator": "dev-master",
         "gedmo/doctrine-extensions": "dev-master",
         "elao/web-profiler-extra-bundle" : "dev-master",
         "bcc/extra-tools-bundle": "dev-master",
