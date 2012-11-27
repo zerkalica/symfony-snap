@@ -40,7 +40,6 @@
         "zerkalica/php-code-browser": "dev-master",
         "zerkalica/phpmd": "dev-master",
         "andreychernykh/lexik-form-filter-bundle": "dev-master",
-        "andreychernykh/millwright-token-generator": "dev-master",
         "gedmo/doctrine-extensions": "dev-master",
         "elao/web-profiler-extra-bundle" : "dev-master",
         "bcc/extra-tools-bundle": "dev-master",
@@ -48,13 +47,56 @@
         "knplabs/gaufrette": "dev-master",
         "beberlei/assert": "*",
         "simplethings/form-serializer-bundle": "dev-master",
+
         "manymules/jquery-bundle": "dev-master",
-        "manymules/modernizr-bundle": "dev-master"
+        "manymules/modernizr-bundle": "dev-master",
+        "manymules/backbonejs-bundle": "dev-master",
+        "manymules/lodash-bundle": "dev-master",
+
+        "opensoft/simple-serializer": "dev-master",
+        "opensoft/opensoft-simple-serializer-bundle": "dev-master"
     },
     "config": {
         "bin-dir": "bin"
     },
     "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "version": "master",
+                "name": "opensoft/simple-serializer",
+                "autoload": {
+                    "psr-0": {
+                        "Opensoft": "src/"
+                    }
+                },
+                "source": {
+                    "url": "https://github.com/opensoft/simple-serializer.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        },
+
+        {
+            "type": "package",
+            "package": {
+                "version": "master",
+                "name": "opensoft/opensoft-simple-serializer-bundle",
+                "target-dir": "Opensoft/Bundle/SimpleSerializerBundle",
+                "autoload": {
+                    "psr-0": {
+                        "Opensoft\\Bundle\\SimpleSerializerBundle": ""
+                    }
+                },
+                "source": {
+                    "url": "https://github.com/opensoft/OpensoftSimpleSerializerBundle.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        },
+
         {
             "type": "package",
             "package": {

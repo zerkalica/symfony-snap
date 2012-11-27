@@ -118,6 +118,7 @@ phpunit_fix() {
 
 node_install() {
     cd $sdir/vendor/java
+    which npm || "echo npm not found"
     npm install less coffee-script
     cd $sdir/bin
     for i in $sdir/vendor/java/node_modules/.bin/* ; do
@@ -138,13 +139,20 @@ update_umlet
 
 update_vendors
 node_install
+
 update_fix
 #update_bs
 
 phpunit_fix
 
-echo "temporary fix - check https://github.com/symfony/symfony/pull/6096"
-cd $sdir/vendor/symfony/symfony
-git checkout d5ff2388cbacf17a389e7aae9d7f4397b929bfcc
+echo "symfony validation fix - check https://github.com/symfony/symfony/pull/6096"
+cd $sdir/vendor/symfony/symfony && \
+    git checkout d5ff2388cbacf17a389e7aae9d7f4397b929bfcc
+
+echo "simple things form serializer fix - check https://github.com/simplethings/SimpleThingsFormSerializerBundle/pull/31"
+cd $sdir/vendor/simplethings/form-serializer-bundle/SimpleThings/FormSerializerBundle && \
+    git reset --hard HEAD~2 && \
+    git pull origin master && \
+    git pull -r git://github.com/zerkalica/SimpleThingsFormSerializerBundle.git master
 
 cd "$cdir"
