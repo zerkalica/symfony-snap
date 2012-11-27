@@ -1,0 +1,24 @@
+{
+  "name": "AppSnap",
+  "version": "0.1.0",
+  "dependencies": {
+    "less": "*",
+    "coffee-script": "*",
+    "jamjs": "*",
+    "bbb": "*",
+    "qunit": "*",
+    "uglify-js": "*",
+    "uglifyjs-watcher": "*",
+    "grunt": "*",
+    "grunt-coffee": "*",
+    "grunt-contrib-less": "*",
+    "grunt-jasmine-task": "*",
+    "grunt-targethtml": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-copy": "*",
+    "grunt-contrib-jst": "*",
+    "grunt-contrib-less": "*",
+    "grunt-contrib-mincss": "*",
+    "grunt-contrib-stylus": "*"
+  }
+}
