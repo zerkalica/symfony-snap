@@ -9,6 +9,6 @@ export NPM_PACKAGES
 
 npm install -g
 
-mkdir -p "web"
-cd web
-bbb init
+#mkdir -p "web"
+#cd web
+#bbb init

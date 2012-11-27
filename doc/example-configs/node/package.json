@@ -12,11 +12,11 @@
     "recess": "*",
     "uglify-js": "*",
     "uglifyjs-watcher": "*",
-    "hogan": "*",
+    "hogan.js": "*",
     "jshint": "*",
     "grunt-contrib": "*",
     "grunt-coffee": "*",
     "grunt-jasmine-task": "*",
-    "grunt-targethtml": "*",
+    "grunt-targethtml": "*"
   }
 }
