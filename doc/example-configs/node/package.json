@@ -14,9 +14,15 @@
     "uglifyjs-watcher": "*",
     "hogan.js": "*",
     "jshint": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-copy": "*",
+    "grunt-contrib-jst": "*",
+    "grunt-contrib-less": "*",
+    "grunt-contrib-mincss": "*",
+    "grunt-contrib-stylus": "*",
     "grunt-contrib": "*",
     "grunt-coffee": "*",
-    "grunt-jasmine-task": "*",
+    "grunt-jasmine-task"
     "grunt-targethtml": "*"
   }
 }
