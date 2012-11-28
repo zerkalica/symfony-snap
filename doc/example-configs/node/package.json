@@ -22,7 +22,7 @@
     "grunt-contrib-stylus": "*",
     "grunt-contrib": "*",
     "grunt-coffee": "*",
-    "grunt-jasmine-task"
+    "grunt-jasmine-task": "*",
     "grunt-targethtml": "*"
   }
 }
