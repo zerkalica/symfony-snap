@@ -23,9 +23,13 @@
     "grunt-contrib": "*",
     "grunt-coffee": "*",
     "grunt-jasmine-task": "*",
+<<<<<<< HEAD
     "grunt-targethtml": "*",
     "grunt-contrib-uglify": "*",
     "grunt-contrib-mincss": "*",
     "grunt-s3": "*"
+=======
+    "grunt-targethtml": "*"
+>>>>>>> 7b4ac75fa9a132571eb26d17ec029f287ff4f574
   }
 }

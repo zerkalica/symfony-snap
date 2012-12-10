@@ -146,9 +146,9 @@ update_fix
 
 phpunit_fix
 
-echo "symfony validation fix - check https://github.com/symfony/symfony/pull/6096"
-cd $sdir/vendor/symfony/symfony && \
-    git checkout d5ff2388cbacf17a389e7aae9d7f4397b929bfcc
+#echo "symfony validation fix - check https://github.com/symfony/symfony/pull/6096"
+#cd $sdir/vendor/symfony/symfony && \
+#    git checkout d5ff2388cbacf17a389e7aae9d7f4397b929bfcc
 
 echo "simple things form serializer fix - check https://github.com/simplethings/SimpleThingsFormSerializerBundle/pull/31"
 cd $sdir/vendor/simplethings/form-serializer-bundle/SimpleThings/FormSerializerBundle && \
