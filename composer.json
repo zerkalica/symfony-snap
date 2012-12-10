@@ -13,7 +13,7 @@
         "jms/security-extra-bundle": "dev-master",
         "jms/di-extra-bundle": "dev-master",
         "jms/parser-lib": "dev-master",
-        "jms/serializer-bundle": "dev-master",
+        "jms/serializer-bundle": "1.0.*",
         "knplabs/knp-paginator-bundle": "dev-master",
         "knplabs/knp-menu-bundle": "dev-master",
         "doctrine/doctrine-fixtures-bundle": "dev-master",
