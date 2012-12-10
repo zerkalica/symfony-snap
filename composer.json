@@ -13,6 +13,7 @@
         "jms/security-extra-bundle": "dev-master",
         "jms/di-extra-bundle": "dev-master",
         "jms/parser-lib": "dev-master",
+        "phpcollection/phpcollection": "dev-master",
         "jms/serializer": "dev-master",
         "jms/serializer-bundle": "dev-master",
         "knplabs/knp-paginator-bundle": "dev-master",
